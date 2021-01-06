@@ -92,108 +92,29 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 }
 /*---------------------------------- x ------------------------------------*/
 
-#define N                	(int)100005
-#define MOD                1000000007
-
-struct node{
-    int totalNode , maxD ;
-    node(int a,int b){
-        totalNode = a , maxD = b ;
-    }
-    bool operator <(const node& p) const{
-        if (totalNode == p.totalNode) return maxD > p.maxD ;
-        return totalNode > p.totalNode ;
-    }
-};
-vector <node> tree ;
-
-int dist[N] ;
-vector <int> g[N], vis ;
-int maxDist ;
-
-
-
-void dfs(int num)
-{
-    vis.pb(num) ;
-    for (auto i : g[num])
-    {
-        if (dist[i] == -1) {
-            dist[i] = dist[num]+1 ;
-            dfs(i) ;
-        }
-    }
-}
-
-void go(int num)
-{
-    // wa(num) ;
-    vis.clear() ;
-    dist[num] = 0 ;
-    dfs(num) ;
-
-    int far = num ;
-    for (auto i : vis) if (dist[far] < dist[i]) far = i ;
-    for (auto i : vis) dist[i] = -1 ;
-
-    dist[far] = 0 ;
-    vis.clear() ;
-    dfs(far) ;
-
-    int mx = 0 ;
-    for (auto i : vis) mx = max(mx , dist[i]) ;
-
-    tree.push_back(node(vis.size() , mx+1)) ;
-    maxDist = max(mx+1 , maxDist) ;
-
-}
-
-
+#define SIZE                (int)5005
+#define MOD                 1000000007
 
 
 void _main_main()
 {
-    tree.clear() ;
-    maxDist = 0 ;
-    int n , m ;
-    cin >> n >> m ;
-    FORN(i,n+1) g[i].clear() ;
-    FORN(i,m) {
-        int x ,y ; cin >> x >> y ;
-        g[x].pb(y) ;
-        g[y].pb(x) ;
-    }
-
-    MEM(dist,-1) ;
-    FORAB(i,1,n){
-        if (dist[i] ==-1) go(i) ;
-    }
-
-    sort(ALL(tree)) ;
-
-    int q ; cin >> q ;
-    while (q--)
+    int n,x ;
+    cin >> n >> x; 
+    vector <ll> v(n),cnt(n,1) ;
+    ll sum= 0;
+    for (auto &i : v) cin >>i , sum+=i ;
+    int i = 0 ;
+    while (1)
     {
-        int val ; cin >> val ;
-        if (maxDist >= val){
-            cout << val-1 << "\n" ;
-            continue ;
-        } 
-        else if (val <= N) {
-            int ans = INT_MAX ;
-            for (auto i : tree){
-                if (i.totalNode >= val)
-                ans = MIN(ans , i.maxD + (val-i.maxD)*2 -1  ) ;
-                else break ;
-            }
-            if (ans != INT_MAX){
-                cout << ans << "\n" ;
-                continue ;
-            }
+        if (v[i] %x == 0){
+            v.push_back(v[i]/x) ;
+            cnt.push_back(cnt[i]*x) ;
+            sum+= (v[i]/x) * cnt[i] *x ;
         }
-        cout << "impossible\n" ;
+        else break ;
+        i++ ;
     }
-    
+    cout << sum << endl; 
 
 
 }
@@ -208,7 +129,7 @@ int main ()
 
     int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        cout << "Case " << i+1  << ":\n" ;
+        
         _main_main() ;
     }
         
