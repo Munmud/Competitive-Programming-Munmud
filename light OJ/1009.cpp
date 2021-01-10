@@ -92,103 +92,75 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 }
 /*---------------------------------- x ------------------------------------*/
 
-#define N                (int)100005
-#define MOD                 1000000007
+#define N                	(int)20005
+#define MOD                1000000007
 
-struct graph{
-    int totalNode, diameter ;
-}tree[N];
-bool cmp(graph a , graph b){
-    if (a.totalNode == b.totalNode) return a.diameter > b.diameter ;
-    return a.totalNode > b.totalNode ;
-}
-int dist[N] , maxDis, idx ;
-vector <int> adj[N] , best, visited ;
 
-void dfs(int u)
+vector <int> g[N] ;
+bitset<N> vis , mark ;
+
+int res1 , res2 ;
+
+void bfs(int node)
 {
-    visited.push_back(u) ;
-    for (auto v : adj[u]){
-        if(dist[v]<0){
-            dist[v] = dist[u]+1 ;
-            dfs(v) ;
+
+    res1 = 0 ;
+    res2 = 0 ;
+
+    queue <PII> q ;
+    q.push({node,0}) ;
+    vis[node] = 1 ;
+
+    while (!q.empty())  
+    {
+        PII pt = q.front() ;
+        q.pop() ;
+
+        if(pt.yy == 0) res1++ ;
+        else res2++ ;
+
+        for (auto i : g[pt.xx]){
+            if (vis[i] == 0){
+                vis[i] = 1 ;
+                q.push({i,pt.yy^1}) ;
+            }
         }
     }
-}
-
-
-void findBest(int from)
-{
-    visited.clear() ;
-    int best = from ;
     
-    dist[from]= 0 ;
-    dfs(from) ;
-    
-    for (auto i : visited){
-        if (dist[i] >dist[best]) best = i ;
-    }
-    if (dist[best]+1 > maxDis) maxDis = dist[best]+1 ;
-
-    for (auto i : visited){
-        dist[i] = -1 ;
-    }
-    visited.clear() ;
-
-    dist[best] = 0 ;
-    dfs(best) ;
-    for (auto i : visited){
-        if (dist[i] >dist[best]) best = i ;
-    }
-    if (dist[best]+1 > maxDis) maxDis = dist[best]+1 ;
-
-    tree[idx].totalNode = visited.size() ;
-    tree[idx].diameter = dist[best]+1 ;
-    idx++ ;
-
 
 
 }
+
 
 
 void _main_main()
 {
-    int n , m ;
-    cin >> n >> m ;
-    FORAB(i,1,n){
-        dist[i] = -1 ;
-        adj[i].clear() ;
-    }
+
+    int m ;cin >> m ;
+    FORN(i,N) g[i].clear() ;
+    int ans = 0 ;
+
+    vis.reset() ;
+    mark.reset() ;
+
     FORN(i,m){
-        int u,v ; cin >> u >> v ;
-        adj[u].push_back(v) ;
-        adj[v].push_back(u) ;
-    }
-    idx = 0 , maxDis = -1 ;
-    FORAB(i,1,n){
-        if (dist[i] <0) findBest(i) ;
+        int x,y ;
+        cin >> x >> y ;
+        g[x].push_back(y) ;
+        g[y].push_back(x) ;
+        mark[x] = 1 ;
+        mark[y] = 1 ;
     }
 
-    sort(tree,tree+idx , cmp) ;
-    int k ; cin >> k ;
-    FORN(i,k)
-    {
-        int in ;cin >> in ;
-        if (in <= maxDis){
-            cout << in-1 << "\n" ;
-            continue ;
-        }
-        if (in > tree[0].totalNode){
-            cout << "impossible\n" ;
-            continue ;
-        }
+    FORAB(i,1,20000){
+        if (mark[i] == 1 && vis[i] == 0){
+            bfs(i) ;
+            ans+= MAX(res1,res2) ;
+        } 
 
-        int minBest = tree[0].diameter + (in - tree[0].diameter)*2 -1 ;
-        for (int j = 1 ; j<idx && tree[j].totalNode >= in ; j++)
-        minBest = min(minBest , tree[j].diameter + (in - tree[j].diameter)*2 -1 ) ;
-
-        cout << minBest << "\n" ;
     }
+    cout << ans << "\n" ;
+
 
 }
 
@@ -196,10 +168,13 @@ void _main_main()
 
 int main ()
 {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-    int testCase = 1 ; cin >> testCase ;
+    int testCase = 1 ;cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        cout << "Case " << i+1 << ":\n" ;
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         
