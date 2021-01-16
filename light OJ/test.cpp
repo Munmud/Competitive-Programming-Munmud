@@ -1,206 +1,101 @@
 
-/***
- *                                ╔╦╗╔═╗╔═╗╔╗╔╔╦╗╔═╗╔═╗╦╦═╗  ╔╦╗╔═╗╦ ╦╔╦╗╔═╗╔═╗╔╦╗ 
- *                                ║║║║ ║║ ║║║║ ║ ╠═╣╚═╗║╠╦╝  ║║║╠═╣╠═╣║║║║ ║║ ║ ║║ 
- *                                ╩ ╩╚═╝╚═╝╝╚╝ ╩ ╩ ╩╚═╝╩╩╚═  ╩ ╩╩ ╩╩ ╩╩ ╩╚═╝╚═╝═╩╝ 
- *    ╦╔╗╔╔═╗╔═╗╦═╗╔╦╗╔═╗╔╦╗╦╔═╗╔╗╔  ╔═╗╔╗╔╔╦╗  ╔═╗╔═╗╔╦╗╔╦╗╦ ╦╔╗╔╦╔═╗╔═╗╔╦╗╦╔═╗╔╗╔  ╔═╗╔╗╔╔═╗╦╔╗╔╔═╗╔═╗╦═╗╦╔╗╔╔═╗ 
- *    ║║║║╠╣ ║ ║╠╦╝║║║╠═╣ ║ ║║ ║║║║  ╠═╣║║║ ║║  ║  ║ ║║║║║║║║ ║║║║║║  ╠═╣ ║ ║║ ║║║║  ║╣ ║║║║ ╦║║║║║╣ ║╣ ╠╦╝║║║║║ ╦ 
- *    ╩╝╚╝╚  ╚═╝╩╚═╩ ╩╩ ╩ ╩ ╩╚═╝╝╚╝  ╩ ╩╝╚╝═╩╝  ╚═╝╚═╝╩ ╩╩ ╩╚═╝╝╚╝╩╚═╝╩ ╩ ╩ ╩╚═╝╝╚╝  ╚═╝╝╚╝╚═╝╩╝╚╝╚═╝╚═╝╩╚═╩╝╚╝╚═╝ 
- *                            ╦ ╦╔╗╔╦╦  ╦╔═╗╦═╗╔═╗╦╔╦╗╦ ╦  ╔═╗╔═╗  ╦═╗╔═╗ ╦╔═╗╦ ╦╔═╗╦ ╦╦ 
- *                            ║ ║║║║║╚╗╔╝║╣ ╠╦╝╚═╗║ ║ ╚╦╝  ║ ║╠╣   ╠╦╝╠═╣ ║╚═╗╠═╣╠═╣╠═╣║ 
- *                            ╚═╝╝╚╝╩ ╚╝ ╚═╝╩╚═╚═╝╩ ╩  ╩   ╚═╝╚    ╩╚═╩ ╩╚╝╚═╝╩ ╩╩ ╩╩ ╩╩ 
- *                                          https://github.com/Munmud 
- *                                           moontasir042@gmail.com 
- */
+// Question: In a tree with n nodes, for some reason, the undirected edge of the tree becomes a directed edge, so that it is not a strongly connected graph. At least add a few special paths to make Any two points on the tree can reach each other.
+// The special path meets the following conditions:
 
+// Must consist of consecutive edges on the tree
+// Must be the reverse side of the directed side on the tree
+// Each node on a path appears at most once
+// Multiple paths can have common nodes and edges
 
-#include <bits/stdc++.h>
+// Idea: It can be known that reverse edges must be used to fill the gaps so that the entire tree is strongly connected, so n-1 reverse edges must be used. Obviously, because there is no ring, each node on the tree has one and only one path to other nodes.
+// So we have to deal with the edge situation of each node.
 
-#define setinf(ar)              memset(ar,126,sizeof ar)
-#define MEM(a, b)               memset ( a, (b), sizeof(a) )
-#define MAX(a, b)               ((a) > (b) ? (a) : (b))
-#define MIN(a, b)               ((a) < (b) ? (a) : (b))
-#define ABS(X)                  ( (X) > 0 ? (X) : ( -(X) ) )
-#define S(X)                    ( (X) * (X) )
-#define SZ(V)                   (int )V.size()
-#define FORN(i, n)              for(int i = 0; i < n; i++)
-#define FORAB(i, a, b)          for(int i = a; i <= b; i++)
-#define ALL(V)                  V.begin(), V.end()
-#define ALLR(V)                 V.rbegin(), V.rend()
-#define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
-#define AIN(A, B, C)            assert(IN(A, B, C))
+// Use the num array to record the number of paths that use the reverse side downward under a node, and a negative number means use the reverse side upward.
+// Each transfer follows the following principles:
 
-#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa(x)                   cout << (#x) << " is " << (x) << endl
+// If the transfer directions of the opposite edges are the same, the number of paths of the children is directly added to the parent node.
+// If the transfer direction is different, then reduce the number of paths stored by the parent node, and count the number of paths that can be calculated first in the result.
 
-#define ll                      long long int
-#define xx                      first
-#define yy                      second
-#define pb(x)                   push_back(x)
-#define PI                      acos(-1.0)
-
-#define PII                     pair<int, int>
-#define PLL                     pair<long long int, long long int>
-#define VI                      vector <int>
-#define VL                      vector <long long int>
-
-#define BOUNDARY(i, j, r , c)   ((i >= 0 && i < r) && (j >= 0 && j < c))
-#define max3(x, y, z)           MAX(MAX(x, y), MAX(y, z))
-
-#define front_zero(n)           __builtin_clzll(n)
-#define back_zero(n)            __builtin_ctzll(n)
-#define total_one(n)            __builtin_popcountll(n)
-
+#include <stdio.h>
+#include <iostream>
+#include <string.h>
+#include <stdlib.h>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <map>
+#include <stack>
+#include <string>
+#include <math.h>
+#include <bitset>
+#include <ctype.h>
 using namespace std;
-
-
-template < typename F, typename S >
-ostream& operator << ( ostream& os, const pair< F, S > & p ) {
-    return os << "(" << p.first << ", " << p.second << ")";
-}
-template <class T>
-ostream & operator << (ostream & os, vector <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template <class T>
-ostream & operator << (ostream & os, set <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template < typename T >
-ostream &operator << ( ostream & os, const multiset< T > &v ) {
-    os << "[";
-    typename multiset< T > :: const_iterator it;
-    for ( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << *it;
-    }
-    return os << "]";
-}
-template < typename F, typename S >
-ostream &operator << ( ostream & os, const map< F, S > &v ) {
-    os << "[";
-    typename map< F , S >::const_iterator it;
-    for( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << it -> first << " = " << it -> second ;
-    }
-    return os << "]";
-}
-/*---------------------------------- x ------------------------------------*/
-
-#define N                (int)100005
-#define MOD                 1000000007
-
-struct graph{
-    int totalNode, diameter ;
-}tree[N];
-bool cmp(graph a , graph b){
-    if (a.totalNode == b.totalNode) return a.diameter > b.diameter ;
-    return a.totalNode > b.totalNode ;
-}
-int dist[N] , maxDis, idx ;
-vector <int> adj[N] , best, visited ;
-
-void dfs(int u)
+typedef pair<int,int> P;
+typedef long long LL;
+const int INF = 0x3f3f3f3f;
+const double PI = acos(-1.0);
+const double eps = 1e-9;
+const int N = 25000 + 5;
+const int mod = 1e9 + 7;
+int t,kase = 0;
+vector<P> G[N];
+int ans = 0;
+int vis[N], num[N];
+int dfs(int u)
 {
-    visited.push_back(u) ;
-    for (auto v : adj[u]){
-        if(dist[v]<0){
-            dist[v] = dist[u]+1 ;
-            dfs(v) ;
-        }
-    }
-}
-
-
-void findBest(int from)
-{
-    visited.clear() ;
-    int best = from ;
-    
-    dist[from]= 0 ;
-    dfs(from) ;
-    
-    for (auto i : visited){
-        if (dist[i] >dist[best]) best = i ;
-    }
-    if (dist[best]+1 > maxDis) maxDis = dist[best]+1 ;
-
-    for (auto i : visited){
-        dist[i] = -1 ;
-    }
-    visited.clear() ;
-
-    dist[best] = 0 ;
-    dfs(best) ;
-    for (auto i : visited){
-        if (dist[i] >dist[best]) best = i ;
-    }
-    if (dist[best]+1 > maxDis) maxDis = dist[best]+1 ;
-
-    tree[idx].totalNode = visited.size() ;
-    tree[idx].diameter = dist[best]+1 ;
-    idx++ ;
-
-
-
-}
-
-
-void _main_main()
-{
-    int n , m ;
-    cin >> n >> m ;
-    FORAB(i,1,n){
-        dist[i] = -1 ;
-        adj[i].clear() ;
-    }
-    FORN(i,m){
-        int u,v ; cin >> u >> v ;
-        adj[u].push_back(v) ;
-        adj[v].push_back(u) ;
-    }
-    idx = 0 , maxDis = -1 ;
-    FORAB(i,1,n){
-        if (dist[i] <0) findBest(i) ;
-    }
-
-    sort(tree,tree+idx , cmp) ;
-    int k ; cin >> k ;
-    FORN(i,k)
+    vis[u] = 1;
+    for(int i = 0; i < G[u].size(); i++)
     {
-        int in ;cin >> in ;
-        if (in <= maxDis){
-            cout << in-1 << "\n" ;
-            continue ;
+        int v = G[u][i].first, type = G[u][i].second;
+        if(vis[v]) continue;
+        dfs(v);
+        if(type == 1)
+        {
+            if(num[v] < 0)
+            {
+                num[u] += num[v];
+            }
+            else
+            {
+                ans += abs(num[v]) + 1;
+                num[u]--;
+            }
         }
-        if (in > tree[0].totalNode){
-            cout << "impossible\n" ;
-            continue ;
+        else if(type == -1)
+        {
+            if(num[v] > 0)
+            {
+                num[u] += num[v];
+            }
+            else
+            {
+                num[u]++;
+            }
         }
-
-        int minBest = tree[0].diameter + (in - tree[0].diameter)*2 -1 ;
-        for (int j = 1 ; j<idx && tree[j].totalNode >= in ; j++)
-        minBest = min(minBest , tree[j].diameter + (in - tree[j].diameter)*2 -1 ) ;
-
-        cout << minBest << "\n" ;
     }
-
 }
-
-
-
-int main ()
+int n;
+int main()
 {
-
-    int testCase = 1 ; cin >> testCase ;
-    for (int i = 0; i < testCase; i++){
-        cout << "Case " << i+1 << ":\n" ;
-        _main_main() ;
+    scanf("%d", &t);
+    while(t--)
+    {
+        scanf("%d", &n);
+        for(int i = 0; i < N; i++) G[i].clear();
+        for(int i = 0; i < n-1; i++)
+        {
+            int u,v;
+            scanf("%d%d", &u, &v);
+            G[v].push_back(make_pair(u,-1));
+            G[u].push_back(make_pair(v, 1));
+        }
+        memset(num, 0, sizeof(num));
+        memset(vis, 0, sizeof(vis));
+        ans = 0;
+        dfs(0);
+        if(num[0] > 0)
+            ans += num[0];
+        printf("Case %d: %d\n", ++kase, ans);
     }
-        
+    return 0;
 }
