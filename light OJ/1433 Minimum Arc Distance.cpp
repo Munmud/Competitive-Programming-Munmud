@@ -95,20 +95,23 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 #define N                	(int)5005
 #define MOD                1000000007
 
+double dist(double ax,double ay, double bx, double by)
+{
+    return sqrt( (ax-bx)*(ax-bx) + (ay-by)*(ay-by) ) ;
+}
+
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
+    double ox,oy,ax,ay,bx,by ;
+    cin >> ox >> oy >> ax >> ay >> bx >> by ;
+    double a = dist(ox,oy,ax,ay) ;
+    double b = dist(ox,oy,bx,by) ;
+    double c = dist(ax,ay,bx,by) ;
+    // wa2(a,b) ;
 
-    for (auto i : se) cout << i << " " ;
+    double theta = acos( (b*b+a*a-c*c)/(2*a*b) ) ;
+    cout << fixed << setprecision(10)<< a*theta << endl ;
 
 }
 
@@ -120,9 +123,9 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ;cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         

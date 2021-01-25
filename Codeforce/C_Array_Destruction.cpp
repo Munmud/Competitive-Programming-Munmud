@@ -95,21 +95,94 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 #define N                	(int)5005
 #define MOD                1000000007
 
+multiset< int, greater<int> > se;
+queue <PII> q ;
+
+bool go(int sum)
+{
+    
+    auto it = se.begin() ;
+    if ( it == se.end() ) return true  ;
+    int val1 = *it ;
+    if( val1 >= sum) return false ;
+    se.erase(it) ;
+    auto ir = se.lower_bound(sum-val1) ;
+
+    if (ir == se.end() ){
+        se.insert(val1) ;
+        return false ;
+    } 
+    int val2 = *ir ;
+
+    if ( val2 !=sum-val1){
+        se.insert(val1) ;
+        return false ;
+    } 
+    se.erase(ir) ;
+
+    q.push({val1,val2}) ;
+    
+    if ( go(MAX(val1,val2) ) ){
+        return true ;
+    }
+
+    // q.pop() ;
+    se.insert(val1) ;
+    se.insert(val2) ;
+    return false ;
+
+}
+
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
+    se.clear() ;
+    int n ; cin >> n ;
+    FORN(i,2*n){
+        int x ; cin >> x ;
+        se.insert(x) ;
+    }
+    auto it = se.begin() ;
+    int num = *it ;
+    se.erase(it) ;
 
-    for (auto i : se) cout << i << " " ;
+    // for (auto i : se) cout << i << " " ;
+    // cout << endl ;
 
+    vector <int> v ;
+    for (auto i : se){
+        v.push_back(i) ;
+    }
+    bool found = false ;
+
+    for (auto i : v)
+    {
+        while (!q.empty())
+        {
+            q.pop() ;
+        }
+        q.push({num,i}) ;
+        auto it = se.lower_bound(i) ;
+        se.erase(it) ;
+        if ( go(max(num,i) ) ){
+            found = true ;
+           break ; 
+        }
+        else {
+            se.insert(i) ;
+        }
+    }
+    if (found == false) cout << "NO\n" ;
+    else{
+        cout << "YES\n" ;
+        cout << q.front().xx+ q.front().yy << endl ;
+        while (!q.empty())
+        {
+            cout << q.front().first << " " << q.front().yy << "\n" ;
+            q.pop() ;
+        }
+        
+    }
 }
 
 
@@ -120,7 +193,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

@@ -92,23 +92,69 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 }
 /*---------------------------------- x ------------------------------------*/
 
-#define N                	(int)5005
+#define N                	(int)1000000 + 25
 #define MOD                1000000007
+
+// --------------  Start Here -------------
+vector <int> primeNumber ;
+void sieve(int n)
+{
+    bool primeMark[N+25] ;
+    memset(primeMark , true , sizeof(primeMark) ) ;
+    int i , j , limit = sqrt(n*1.) +2 ;
+    //primeMark[1] = false ;
+    //for (i = 4 ; i<=n ; i+=2) primeMark[i] = false ;
+
+    primeNumber.emplace_back(2) ;
+    for (i = 3 ; i<=n ; i+=2)
+    {
+        if (primeMark[i] == false) continue ;
+        primeNumber.emplace_back(i) ;
+        if (i<=limit){
+            for (j = i*i ; j<=n ; j+=i*2)
+                primeMark[j] = false ;
+        }
+    }
+}
+// ----------- End here ----------------
+
+ll totalDivisor(ll n)
+{
+    // wa(n) ;
+    ll ans = 1 ;
+    for (auto i : primeNumber)
+    {
+        if (i*i > n ) break ;
+        // wa2(n,i) ;
+        ll cnt = 0 ;
+        while(n%i == 0){
+            n/=i ;
+            cnt++ ;
+        }
+        ans*= (cnt+1) ;
+    }
+    if (n >1 ) ans*=2 ;
+    return ans ;
+}
 
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
+    ll a,b ;
+    cin >> a>> b ;
+    if ( sqrt(a) < b){
+        cout  << 0 << "\n" ;
+        return ;
+    }
+    ll d = totalDivisor(a);
+    // wa2(a,d) ;
+    d/=2 ;
+    FORAB(i,1,b-1){
+        if (a%i==0) d-- ;
+    }
 
-    for (auto i : se) cout << i << " " ;
+    cout << d << "\n" ;
+
 
 }
 
@@ -116,13 +162,12 @@ void _main_main()
 
 int main ()
 {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    sieve(N) ;
+
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         

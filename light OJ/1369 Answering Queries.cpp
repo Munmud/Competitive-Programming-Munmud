@@ -98,17 +98,33 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
+    ll n , q; 
+    cin >> n >> q ;
+    vector <ll> v(n) ;
+    ll sum = 0 ;
+    FORN(i,n)
+    {
+        cin >> v[i] ;
+        sum-= i*v[i] ;
+        sum+= (n-i-1)*v[i] ;
+    }
+    while (q--)
+    {
+        ll cmd ; cin >> cmd ;
+        if (cmd == 1) cout << sum << "\n" ;
+        else {
+            ll idx , val ;
+            cin >> idx >> val ;
+            sum+= idx*v[idx] ;
+            sum-= (n-idx-1)*v[idx] ;
 
-    for (auto i : se) cout << i << " " ;
+            v[idx] = val ;
+
+            sum-= idx*v[idx] ;
+            sum+= (n-idx-1)*v[idx] ;
+        }
+    }
+    
 
 }
 
@@ -120,9 +136,9 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ":\n" ;
         _main_main() ;
     }
         

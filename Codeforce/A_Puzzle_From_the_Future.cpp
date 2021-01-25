@@ -98,17 +98,24 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
+    ll n  ; cin >> n ;
+    string s , ans ;
+    cin >> s ;
 
-    for (auto i : se) cout << i << " " ;
+    int prev = 0 ;
+
+    FORN(i,n)
+    {
+        if (s[i] == '1'){
+            if (prev == 2) ans+= '0' , prev = 1 ;
+            else ans+= '1' , prev = 2 ;
+        }
+        else {
+            if (prev == 1) ans+= '0' , prev = 0 ;
+            else ans+= '1' , prev = 1 ;
+        }
+    }
+    cout << ans << endl ;
 
 }
 
@@ -120,7 +127,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

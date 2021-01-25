@@ -92,23 +92,44 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 }
 /*---------------------------------- x ------------------------------------*/
 
-#define N                	(int)5005
+#define N                	(int)5e6+10
 #define MOD                1000000007
+
+// idea : sieve of euler toshent function
+
+bool primeMark[N] ;
+unsigned ll phi[N] ;
+
+void sieve(ll n)
+{
+    FORAB(i,1,n) phi[i] = i ;
+    memset(primeMark , 1 , sizeof(primeMark) ) ;
+    ll i , j;
+    phi[1] = 1 ;
+
+    for (i = 2 ; i<=n ; i++)
+    {
+        if (!primeMark[i]) continue ;
+        for (j = i ; j<=n ; j+=i)
+        {
+            primeMark[j] = 0 ;
+            phi[j] = phi[j]/i*(i-1) ;
+        }
+    }
+    FORAB(i,1,N){
+        phi[i] *= phi[i] ;
+        phi[i]+= phi[i-1]  ;
+    } 
+}
+
 
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-
-    for (auto i : se) cout << i << " " ;
+    ll a,b ;
+    cin >> a >> b ;
+    cout << phi[b]-phi[a-1] << "\n" ;
+    
 
 }
 
@@ -120,9 +141,11 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    sieve(N-5) ;
+
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         

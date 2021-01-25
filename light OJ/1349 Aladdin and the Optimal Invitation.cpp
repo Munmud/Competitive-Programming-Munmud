@@ -25,6 +25,7 @@
 #define SZ(V)                   (int )V.size()
 #define FORN(i, n)              for(int i = 0; i < n; i++)
 #define FORAB(i, a, b)          for(int i = a; i <= b; i++)
+#define FORBA(i, b, a)          for(int i = b; i >= a; i--)
 #define ALL(V)                  V.begin(), V.end()
 #define ALLR(V)                 V.rbegin(), V.rend()
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
@@ -92,23 +93,75 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 }
 /*---------------------------------- x ------------------------------------*/
 
-#define N                	(int)5005
+#define N                	(int)50005
 #define MOD                1000000007
+
+ll row[N] , row_riMove[N] ,row_leMove[N] ;
+ll col[N] , col_riMove[N] ,col_leMove[N] ;
 
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
+    MEM(row,0) ;
+    MEM(col,0) ;
+    MEM(row_riMove,0) ;
+    MEM(row_leMove,0) ;
+    MEM(col_riMove,0) ;
+    MEM(col_leMove,0) ;
+    
+    int n, m, q, a, b, c, sum, ans_x , ans_y;
+    ll x = LLONG_MAX , y = LLONG_MAX  ;
 
-    for (auto i : se) cout << i << " " ;
+    cin >> n >> m >> q ;
+    FORN(i,q){
+        cin >> a >> b >> c ;
+        row[a] += c ; 
+        col[b] += c ; 
+    }
+
+    sum = 0 ;
+    FORAB(i,1,n){
+        sum += row[i] ;
+        row_leMove[i+1] = row_leMove[i] + sum ;
+    }
+    sum = 0 ;
+    FORBA(i,n,1){
+        sum += row[i] ;
+        row_riMove[i-1] = row_riMove[i] + sum ;
+    }
+
+    sum = 0 ;
+    FORAB(i,1,m){
+        sum += col[i] ;
+        col_leMove[i+1] = col_leMove[i] + sum ;
+    }
+    sum = 0 ;
+    FORBA(i,m,1){
+        sum += col[i] ;
+        col_riMove[i-1] = col_riMove[i] + sum ;
+    }
+    
+    FORAB(i,1,n)
+    {
+        ll val = row_leMove[i] + row_riMove[i] ;
+        if (val <x) {
+            x = val ;
+            ans_x = i ;
+        }
+    }
+
+    FORAB(i,1,m)
+    {
+        ll val = col_leMove[i] + col_riMove[i] ;
+        if (val <y) {
+            y = val ;
+            ans_y = i ;
+        }
+    }
+
+    cout << ans_x << " " << ans_y << "\n" ;
+
+    
 
 }
 
@@ -120,9 +173,9 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         

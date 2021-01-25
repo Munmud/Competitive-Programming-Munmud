@@ -95,20 +95,38 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 #define N                	(int)5005
 #define MOD                1000000007
 
+// --------------  Start Here -------------
+vector <int> primeNumber ;
+void sieve(int n)
+{
+    bool primeMark[1000002] ;
+    memset(primeMark , true , sizeof(primeMark) ) ;
+    int i , j , limit = sqrt(n*1.) +2 ;
+    //primeMark[1] = false ;
+    //for (i = 4 ; i<=n ; i+=2) primeMark[i] = false ;
+
+    primeNumber.emplace_back(2) ;
+    for (i = 3 ; i<=n ; i+=2)
+    {
+        if (primeMark[i] == false) continue ;
+        primeNumber.emplace_back(i) ;
+        if (i<=limit){
+            for (j = i*i ; j<=n ; j+=i*2)
+                primeMark[j] = false ;
+        }
+    }
+}
+// ----------- End here ----------------
+
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-
-    for (auto i : se) cout << i << " " ;
+    ll d ; cin >> d ;
+    auto it = lower_bound(ALL(primeNumber) , d+1) ;
+    ll ans = *it ;
+    it = lower_bound(ALL(primeNumber) ,ans+d) ;
+    ans*= *it ;
+    cout << ans << endl ;
 
 }
 
@@ -120,7 +138,9 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    sieve(100000) ;
+
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

@@ -15,6 +15,7 @@
 
 
 #include <bits/stdc++.h>
+using namespace std;
 
 #define setinf(ar)              memset(ar,126,sizeof ar)
 #define MEM(a, b)               memset ( a, (b), sizeof(a) )
@@ -51,7 +52,6 @@
 #define back_zero(n)            __builtin_ctzll(n)
 #define total_one(n)            __builtin_popcountll(n)
 
-using namespace std;
 
 
 template < typename F, typename S >
@@ -98,17 +98,18 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 
 void _main_main()
 {
-    ll n  ;
-    multiset< int, greater<int> > se;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(1) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
-    se.insert(2) ;
+    ll percent , digit , val = 0 ;
+    cin >> percent >> digit ;
 
-    for (auto i : se) cout << i << " " ;
+    int cnt = 0 ;
+    while (1)
+    {
+        val = (val *10 + digit)%percent ;
+        cnt++ ;
+        if (val == 0) break ;
+    }
+    cout << cnt << "\n" ;
+    
 
 }
 
@@ -120,9 +121,9 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         
