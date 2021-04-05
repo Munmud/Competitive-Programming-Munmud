@@ -52,103 +52,106 @@ using namespace std;
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
-	return os << "(" << p.first << ", " << p.second << ")";
+    return os << "(" << p.first << ", " << p.second << ")";
 }
 template <class T>
 ostream & operator << (ostream & os, vector <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template < typename T >
 ostream &operator << ( ostream & os, const multiset< T > &v ) {
-	os << "[";
-	typename multiset< T > :: const_iterator it;
-	for ( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << *it;
-	}
-	return os << "]";
+    os << "[";
+    typename multiset< T > :: const_iterator it;
+    for ( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << *it;
+    }
+    return os << "]";
 }
 template < typename F, typename S >
 ostream &operator << ( ostream & os, const map< F, S > &v ) {
-	os << "[";
-	typename map< F , S >::const_iterator it;
-	for( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << it -> first << " = " << it -> second ;
-	}
-	return os << "]";
+    os << "[";
+    typename map< F , S >::const_iterator it;
+    for( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << it -> first << " = " << it -> second ;
+    }
+    return os << "]";
 }
 /*---------------------------------- x ------------------------------------*/
 
-const ll MOD = 1e9+7 ;
+#define MOD                1000000007
 const int N = 5050 ;
 
+int ans = 0 ;
 
-/* ------------- trie tree start here-------------------*/
-
-// initiall 'a-z' is considered 
-const int ALPHABET_SIZE = 26; 
-
-struct node {
-	bool endmark;
-	node* next[ALPHABET_SIZE + 1];
-	node()
-	{
-		endmark = false;
-		for (int i = 0; i < ALPHABET_SIZE; i++)
-			next[i] = NULL;
-	}
-} * root;
-
-void inst(string str)
+void go( vector <int> & n , vector <int> & m )
 {
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			curr->next[id] = new node();
-		curr = curr->next[id];
-	}
-	curr->endmark = 1;
+    int i = 0 ;
+
+    list <int> right_box ;
+
+    FORN(j,SZ(m)){
+        while (i<SZ(n) && n[i] <m[j]) i++ ;
+        if (i<SZ(n) && n[i] == m[j]) right_box.push_back(n[i]) ;
+    }
+    int res = SZ(right_box) ;
+
+    int box = 0 ;
+    i = 0 ;
+
+    FORN(j,SZ(m)){
+        while (i<SZ(n) && n[i] <m[j]) box++ , i++ ;
+        if (i<SZ(n) && n[i] == m[j]) {
+            box++ ; 
+            i++;
+            right_box.pop_front() ; 
+        }
+
+        auto it = lower_bound(ALL(m) , m[j]-box+1) ;
+        int id = distance(m.begin() , it) ;
+        
+        res = MAX(res , j-id+1 + SZ(right_box)) ;
+
+    }
+    ans+= res ;
+
 }
-
-bool srch(string str)
-{
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			return false;
-		curr = curr->next[id];
-	}
-	return curr->endmark;
-}
-
-void del(node* cur)
-{
-	for (int i = 0; i < ALPHABET_SIZE; i++)
-		if (cur->next[i])
-			del(cur->next[i]);
-	delete (cur);
-}
-
-/* ------------- trie tree end here-------------------*/
-
 
 
 void _main_main()
 {
-	ll n  ;
+    ll n ,m ; cin >> n >> m;
+    vector <int> pos_n,neg_n ,pos_m,neg_m ;
+    FORN(i,n){
+        int x ;cin >> x ;
+        if (x >0)pos_n.pb(x) ;
+        else neg_n.pb(-x) ;
+    }
+    FORN(i,m){
+        int x ;cin >> x ;
+        if (x >0)pos_m.pb(x) ;
+        else neg_m.pb(-x) ;
+    }
+
+    sort(ALL(pos_n)) ;
+    sort(ALL(pos_m)) ;
+    sort(ALL(neg_n)) ;
+    sort(ALL(neg_m)) ;
+
+    go(pos_n,pos_m) ;
+    go(neg_n,neg_m) ;
+
+    cout << ans << nl ;
+    ans = 0 ;
 
 }
 
@@ -156,14 +159,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ; cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

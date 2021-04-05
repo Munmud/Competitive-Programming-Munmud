@@ -52,103 +52,105 @@ using namespace std;
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
-	return os << "(" << p.first << ", " << p.second << ")";
+    return os << "(" << p.first << ", " << p.second << ")";
 }
 template <class T>
 ostream & operator << (ostream & os, vector <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template < typename T >
 ostream &operator << ( ostream & os, const multiset< T > &v ) {
-	os << "[";
-	typename multiset< T > :: const_iterator it;
-	for ( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << *it;
-	}
-	return os << "]";
+    os << "[";
+    typename multiset< T > :: const_iterator it;
+    for ( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << *it;
+    }
+    return os << "]";
 }
 template < typename F, typename S >
 ostream &operator << ( ostream & os, const map< F, S > &v ) {
-	os << "[";
-	typename map< F , S >::const_iterator it;
-	for( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << it -> first << " = " << it -> second ;
-	}
-	return os << "]";
+    os << "[";
+    typename map< F , S >::const_iterator it;
+    for( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << it -> first << " = " << it -> second ;
+    }
+    return os << "]";
 }
 /*---------------------------------- x ------------------------------------*/
 
-const ll MOD = 1e9+7 ;
+#define MOD                10000019
 const int N = 5050 ;
 
-
-/* ------------- trie tree start here-------------------*/
-
-// initiall 'a-z' is considered 
-const int ALPHABET_SIZE = 26; 
-
-struct node {
-	bool endmark;
-	node* next[ALPHABET_SIZE + 1];
-	node()
-	{
-		endmark = false;
-		for (int i = 0; i < ALPHABET_SIZE; i++)
-			next[i] = NULL;
-	}
-} * root;
-
-void inst(string str)
+// --------------  Start Here -------------
+vector <ll> primeNumber ;
+void sieve(int n)
 {
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			curr->next[id] = new node();
-		curr = curr->next[id];
-	}
-	curr->endmark = 1;
+    bool primeMark[1000002] ;
+    memset(primeMark , true , sizeof(primeMark) ) ;
+    int i , j , limit = sqrt(n*1.) +2 ;
+    //primeMark[1] = false ;
+    //for (i = 4 ; i<=n ; i+=2) primeMark[i] = false ;
+
+    primeNumber.emplace_back(2) ;
+    for (i = 3 ; i<=n ; i+=2)
+    {
+        if (primeMark[i] == false) continue ;
+        primeNumber.emplace_back(i) ;
+        if (i<=limit){
+            for (j = i*i ; j<=n ; j+=i*2)
+                primeMark[j] = false ;
+        }
+    }
 }
+// ----------- End here ----------------
 
-bool srch(string str)
-{
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			return false;
-		curr = curr->next[id];
-	}
-	return curr->endmark;
+//----------- Mod inverse/Big mod Start here ----------
+template <class T> inline T bigmod(T p,T e,T M){
+    ll ret = 1;
+    for(; e > 0; e >>= 1){
+        if(e & 1) ret = (ret * p) % M;
+        p = (p * p) % M;
+    } return (T)ret;
 }
-
-void del(node* cur)
-{
-	for (int i = 0; i < ALPHABET_SIZE; i++)
-		if (cur->next[i])
-			del(cur->next[i]);
-	delete (cur);
-}
-
-/* ------------- trie tree end here-------------------*/
-
+template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
+//----------- ------------------------------------ ----------
 
 
 void _main_main()
 {
-	ll n  ;
+    ll n ,t ; cin >> n >> t ;
+
+    ll ans = 1 ;
+    for (auto i : primeNumber)
+    {
+        int nn = n ;
+        if (i>n) break ;
+        // if (n%i) continue ;
+        ll cnt = 0 ;
+        while (nn/i) {
+            cnt+= nn/i ;
+            nn/=i ;
+        }
+        if (cnt>=t){
+            cnt/=t ;
+            // wa2(i,cnt) ;
+            ans*= bigmod(i,cnt,(ll)MOD) ;
+            ans%=MOD ;
+        }
+        // wa2(i,cnt) ;
+    }
+    if (ans == 1) cout << -1 << nl ;
+    else cout << ans << nl ;
 
 }
 
@@ -156,14 +158,16 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    sieve(1000000) ;
+
+    int testCase = 1 ; cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        cout << "Case " << i+1 << ": " ;
+        _main_main() ;
+    }
+        
 }

@@ -52,103 +52,100 @@ using namespace std;
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
-	return os << "(" << p.first << ", " << p.second << ")";
+    return os << "(" << p.first << ", " << p.second << ")";
 }
 template <class T>
 ostream & operator << (ostream & os, vector <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template < typename T >
 ostream &operator << ( ostream & os, const multiset< T > &v ) {
-	os << "[";
-	typename multiset< T > :: const_iterator it;
-	for ( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << *it;
-	}
-	return os << "]";
+    os << "[";
+    typename multiset< T > :: const_iterator it;
+    for ( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << *it;
+    }
+    return os << "]";
 }
 template < typename F, typename S >
 ostream &operator << ( ostream & os, const map< F, S > &v ) {
-	os << "[";
-	typename map< F , S >::const_iterator it;
-	for( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << it -> first << " = " << it -> second ;
-	}
-	return os << "]";
+    os << "[";
+    typename map< F , S >::const_iterator it;
+    for( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << it -> first << " = " << it -> second ;
+    }
+    return os << "]";
 }
 /*---------------------------------- x ------------------------------------*/
 
 const ll MOD = 1e9+7 ;
 const int N = 5050 ;
 
-
-/* ------------- trie tree start here-------------------*/
-
-// initiall 'a-z' is considered 
-const int ALPHABET_SIZE = 26; 
-
-struct node {
-	bool endmark;
-	node* next[ALPHABET_SIZE + 1];
-	node()
-	{
-		endmark = false;
-		for (int i = 0; i < ALPHABET_SIZE; i++)
-			next[i] = NULL;
-	}
-} * root;
-
-void inst(string str)
+bool isPrime(int n)
 {
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			curr->next[id] = new node();
-		curr = curr->next[id];
-	}
-	curr->endmark = 1;
+    // Corner cases
+    if (n <= 1)
+        return false;
+    if (n <= 3)
+        return true;
+  
+    // This is checked so that we can skip
+    // middle five numbers in below loop
+    if (n % 2 == 0 || n % 3 == 0)
+        return false;
+  
+    for (int i = 5; i * i <= n; i = i + 6)
+        if (n % i == 0 || n % (i + 2) == 0)
+            return false;
+  
+    return true;
 }
 
-bool srch(string str)
+
+
+bool ok(vector<int> & v)
 {
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			return false;
-		curr = curr->next[id];
-	}
-	return curr->endmark;
+    for(int i = 0 ; i<v.size()-1 ; i++){
+        if ( max(v[i],v[i+1]) %min(v[i],v[i+1]) == 0 && isPrime(max(v[i],v[i+1])/min(v[i],v[i+1]) )){
+            continue ;
+        } 
+        else return false ;
+    }
+
+    for (auto i : v) cout << i << " " ;
+    cout << nl ;
+    return true;
 }
-
-void del(node* cur)
-{
-	for (int i = 0; i < ALPHABET_SIZE; i++)
-		if (cur->next[i])
-			del(cur->next[i]);
-	delete (cur);
-}
-
-/* ------------- trie tree end here-------------------*/
-
 
 
 void _main_main()
 {
-	ll n  ;
+    ll n  ;
+    cin >> n ;
+    vector <int> ans ;
+    for (int i = 1 ; i*i <=n ; i++)
+    {
+        if (n%i == 0){
+            ans.pb(i) ;
+            if (i != n/i) ans.pb(n/i) ;
+        }
+    }
+    sort(ALL(ans)) ;
+    
+    do {
+        ok(ans) ;
+    } while ( std::next_permutation(ALL(ans) ) ) ;
+
 
 }
 
@@ -156,14 +153,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ; cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        cout << "Case " << i+1 << ":" <<  nl ;
+        _main_main() ;
+    }
+        
 }

@@ -52,103 +52,107 @@ using namespace std;
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
-	return os << "(" << p.first << ", " << p.second << ")";
+    return os << "(" << p.first << ", " << p.second << ")";
 }
 template <class T>
 ostream & operator << (ostream & os, vector <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-	os << "{ ";
-	for(auto& y : x) os << y << " ";
-	return os << "}";
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
 }
 template < typename T >
 ostream &operator << ( ostream & os, const multiset< T > &v ) {
-	os << "[";
-	typename multiset< T > :: const_iterator it;
-	for ( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << *it;
-	}
-	return os << "]";
+    os << "[";
+    typename multiset< T > :: const_iterator it;
+    for ( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << *it;
+    }
+    return os << "]";
 }
 template < typename F, typename S >
 ostream &operator << ( ostream & os, const map< F, S > &v ) {
-	os << "[";
-	typename map< F , S >::const_iterator it;
-	for( it = v.begin(); it != v.end(); it++ ) {
-		if( it != v.begin() ) os << ", ";
-		os << it -> first << " = " << it -> second ;
-	}
-	return os << "]";
+    os << "[";
+    typename map< F , S >::const_iterator it;
+    for( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << it -> first << " = " << it -> second ;
+    }
+    return os << "]";
 }
 /*---------------------------------- x ------------------------------------*/
 
-const ll MOD = 1e9+7 ;
+/*-----------------------Bitmask------------------*/
+int Set(int N,int pos){return N=N | (1<<pos);}
+int reset(int N,int pos){return N= N & ~(1<<pos);}
+bool check(int N,int pos){return (bool)(N & (1<<pos));}
+/*------------------------------------------------*/
+
+#define MOD                1000000007
 const int N = 5050 ;
 
 
-/* ------------- trie tree start here-------------------*/
+int uuu,rrr,ddd,lll ;
 
-// initiall 'a-z' is considered 
-const int ALPHABET_SIZE = 26; 
 
-struct node {
-	bool endmark;
-	node* next[ALPHABET_SIZE + 1];
-	node()
-	{
-		endmark = false;
-		for (int i = 0; i < ALPHABET_SIZE; i++)
-			next[i] = NULL;
-	}
-} * root;
-
-void inst(string str)
+bool go(bool a , bool b , bool c , bool d , int num)
 {
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			curr->next[id] = new node();
-		curr = curr->next[id];
-	}
-	curr->endmark = 1;
+    // wa(num) ;
+    // cout << a << " " << b << " " << c << " " << d << nl ;
+    int up = uuu , left = lll , right = rrr , down = ddd ;
+    if (a == 1){
+        up-=1 ;
+        left-=1 ;
+    }
+     if (b == 1)
+    {
+        up-=1 ;
+        right-=1 ;
+    }
+    if (c == 1){
+        down-=1 ;
+        left-=1 ;
+    }
+     if (d == 1)
+    {
+        down-=1 ;
+        right-=1 ;
+    }
+    // cout << "after = " << left << " " << up << " " << right << " " << down << nl ;
+    // wa(num-2) ;
+
+    if ( up<0 || up>num-2) return false ; 
+    if ( right<0 || right>num-2) return false ; 
+    if ( left<0 || left>num-2) return false ; 
+    if ( down<0 || down>num-2) return false ; 
+
+    // cout << "ANS = " << a << " " << b << " " << c << " " << d << nl ;
+
+    return true ;
 }
 
-bool srch(string str)
-{
-    int len = str.size() ;
-	node* curr = root;
-	for (int i = 0; i < len; i++) {
-		int id = str[i] - 'a';
-		if (curr->next[id] == NULL)
-			return false;
-		curr = curr->next[id];
-	}
-	return curr->endmark;
-}
-
-void del(node* cur)
-{
-	for (int i = 0; i < ALPHABET_SIZE; i++)
-		if (cur->next[i])
-			del(cur->next[i]);
-	delete (cur);
-}
-
-/* ------------- trie tree end here-------------------*/
 
 
 
 void _main_main()
 {
-	ll n  ;
+    int num  ; cin >> num >> uuu >> rrr >> ddd >> lll ;
+    // wa(num) ;
+    bool flag = false ;
+    FORN(i,16)
+    {
+        if(go(check(i,0) , check(i,1) , check(i,2) , check(i,3) , num)) flag = true ;
+    }
+    
+    if (flag) cout << "YES" << nl ;
+    else cout << "NO" << nl ;
+
 
 }
 
@@ -156,14 +160,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ;cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }
