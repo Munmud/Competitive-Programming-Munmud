@@ -94,21 +94,29 @@ const int N = 5050 ;
 
 void _main_main()
 {
-    ll n  ;
-    string s ;
-    cin >> s;
+    ll n , q  ;
+    cin >> n >> q ;
 
-    string ss ;
-    map <string , int> mp ;
-    FORN(i,s.size()-1) {
-       ss = "" ;
-       ss+=  s[i] ;
-       ss+=  s[i+1] ;
-       mp[ss] ++ ;
-      //  wa(ss) ;
+    vector <int> arr(60 , INT_MAX) ;
+    int cc = 0 ;
+
+    FORN(i,n)
+    {
+        int x ; cin >> x ;
+        arr[x] = MIN(arr[x] , i+1) ;
     }
 
-    cout << mp << nl ;
+    FORN(i,q)
+    {
+        int x ;
+        cin >> x ;
+        cout << arr[x] << " " ;
+        FORN(i,51){
+            if (arr[i] < arr[x]) arr[i]++ ;
+        }
+        arr[x] = 1 ;
+    }
+    
 
 }
 

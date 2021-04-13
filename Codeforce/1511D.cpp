@@ -91,24 +91,59 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 const ll MOD = 1e9+7 ;
 const int N = 5050 ;
 
+list <char> li[26] ;
+string ss = "" ;
+string ans ;
+
+ll n ,k ;
+bool flag = false ;
+
+bitset <30> vis[30] ;
+
+void go(int id, int cc)
+{
+    // if (cc == k*k) cout << ss << nl ;
+    if (cc > k*k && id == 0) {
+        ans = ss ;
+        flag = true ;
+    }
+    FORN(i,k)
+    {
+        if (flag) break ;
+        if (vis[id][i] == 0 ){
+            ss+= i + 'a' ;
+            vis[id][i] = 1 ;
+            go(i,cc+1) ;
+            vis[id][i] = 0 ;
+            ss.pop_back() ;
+        } 
+    }
+}
 
 void _main_main()
 {
-    ll n  ;
-    string s ;
-    cin >> s;
+    cin  >> n >> k ;
+    flag = false ;
 
-    string ss ;
-    map <string , int> mp ;
-    FORN(i,s.size()-1) {
-       ss = "" ;
-       ss+=  s[i] ;
-       ss+=  s[i+1] ;
-       mp[ss] ++ ;
-      //  wa(ss) ;
+    FORN(i,k)
+    {
+        FORN(j,k){
+            li[i].push_back(j) ;
+        }
+    }
+    go(0 , 1) ;
+    // wa(ans) ;
+    int i = 0 ;
+    cout << 'a' ;
+    FORN(j,n-1)
+    {
+        cout << ans[i] ;
+        i= (i+1)%(ans.size()) ;
+        // wa(i) ;
     }
 
-    cout << mp << nl ;
+    
+
 
 }
 

@@ -95,20 +95,16 @@ const int N = 5050 ;
 void _main_main()
 {
     ll n  ;
-    string s ;
-    cin >> s;
+    cin >> n ; 
+    int cnt  = 0 ;
 
-    string ss ;
-    map <string , int> mp ;
-    FORN(i,s.size()-1) {
-       ss = "" ;
-       ss+=  s[i] ;
-       ss+=  s[i+1] ;
-       mp[ss] ++ ;
-      //  wa(ss) ;
+    FORN(i,n){
+        int x ;
+        cin >> x ;
+        if (x == 2) continue ;
+        cnt++ ;
     }
-
-    cout << mp << nl ;
+    cout << cnt << nl ;
 
 }
 
@@ -120,7 +116,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

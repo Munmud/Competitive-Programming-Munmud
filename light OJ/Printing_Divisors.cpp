@@ -115,16 +115,7 @@ bool isPrime(int n)
 
 bool ok(vector<int> & v)
 {
-    for(int i = 0 ; i<v.size()-1 ; i++){
-        if ( max(v[i],v[i+1]) %min(v[i],v[i+1]) == 0 && isPrime(max(v[i],v[i+1])/min(v[i],v[i+1]) )){
-            continue ;
-        } 
-        else return false ;
-    }
-
-    for (auto i : v) cout << i << " " ;
-    cout << nl ;
-    return true;
+    set <>
 }
 
 
@@ -132,19 +123,17 @@ void _main_main()
 {
     ll n  ;
     cin >> n ;
-    vector <int> ans ;
+    set <int> ans ;
     for (int i = 1 ; i*i <=n ; i++)
     {
         if (n%i == 0){
-            ans.pb(i) ;
-            if (i != n/i) ans.pb(n/i) ;
+            se.pb(i) ;
+            se.pb(n/i) ;
         }
     }
     sort(ALL(ans)) ;
     
-    do {
-        ok(ans) ;
-    } while ( std::next_permutation(ALL(ans) ) ) ;
+    ok(ans) ;
 
 
 }
