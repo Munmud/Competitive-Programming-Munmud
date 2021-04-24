@@ -88,9 +88,8 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 }
 /*---------------------------------- x ------------------------------------*/
 
-const ll MOD = 1e9+7 ;
-const int N = 2000+10 ;
-const int B = 29 ;
+const ll MOD = 1000000007ll ;
+const int N = 5050 ;
 
 template <class T> inline T bigmod(T p,T e,T M){
     ll ret = 1;
@@ -138,61 +137,55 @@ struct HASHING{
         }
     }
 
-}*h1 ,*h2, *h3, *h4;
+}*h1 ,*h2;
+
 
 void _main_main()
 {
-    ll n  ;
-    string s ,  st ,ed ;
-    cin >> s >> st >> ed ;
+    ll n ,m ,x  ;
+    cin >> n >> m ;
+    string s ; cin >> s ; 
+    int len = s.size() ;
 
-    int p = st.size() ;
-    int q = ed.size() ;
-
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
-
+    h1 = new HASHING(len+10 , 29 , MOD ) ;
     h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
 
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
+    int idx = -1 ;
 
+    ll ans = 1 ;
 
-    vector <int> index ;
+    ll cc = 0 ;
 
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
-    
-
-    h2->gen( st ) ;
-    h4->gen( st ) ;
-
-    set<PII> se ;
-
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
-
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
-
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
+    FORN(i,m)
+    {
+        cin >> x ; x-- ;
+        // wa2(idx,x) ;
+        if (idx >= x){
+            int le = idx - x +1 ;
+            // wa2(len-le , len-1) ;
+            // wa2(0 , le-1) ;
+            if (h1->range(len - le,len-1) != h1->range(0,le-1)){
+                ans = 0 ;
+                break ;
             }
 
         }
-    
-    cout << se.size() << nl ;
-        
-    
+        else {
+            cc += MAX(x-idx-1,0) ;
+        }
+        idx = x + len-1 ;
+        if (idx >=n ) {
+            ans = 0 ;
+            break ;
+        }
+    }
+    // wa(idx) ;
+    // if (idx<n) 
+    cc += MAX(n-idx-1,0) ;
+    if (cc && ans) ans = bigmod(26ll,cc,MOD) ;
+    // wa(cc) ;
+
+    cout << ans << nl ;
 
 }
 
@@ -203,9 +196,6 @@ int main ()
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
 
     int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){

@@ -89,110 +89,62 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 /*---------------------------------- x ------------------------------------*/
 
 const ll MOD = 1e9+7 ;
-const int N = 2000+10 ;
-const int B = 29 ;
+const int N = 5050 ;
 
-template <class T> inline T bigmod(T p,T e,T M){
-    ll ret = 1;
-    for(; e > 0; e >>= 1){
-        if(e & 1) ret = (ret * p) % M;
-        p = (p * p) % M;
-    } return (T)ret;
-}
-template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
-
-struct HASHING{
-    ll MOD ;
-    int N ,B ;
-    vector <int> hash , inv ;
-    int n ;
-
-    HASHING(int _N , int _B , ll _M){
-        N = _N ;
-        B = _B ;
-        MOD = _M ;
-        hash.resize(N) ;
-        inv.resize(N) ;
-
-        inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-        for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
-    }
-
-    inline int range(int l , int r)
-    {
-        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
-        if (ret < 0) ret += MOD;
-        return ret;
-    }
-
-    void gen(string &t)
-    {
-        n = t.size();
-        int power = 1;
-
-        for (int i = 0; i < n; ++i)
-        {
-            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' + 1)) % MOD;
-            // revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
-            power = power * 1ll * B % MOD;
-        }
-    }
-
-}*h1 ,*h2, *h3, *h4;
+set<PII> se ;
 
 void _main_main()
 {
-    ll n  ;
-    string s ,  st ,ed ;
-    cin >> s >> st >> ed ;
+    ll n , x  ; cin >> n ;
+    vector <ll> t(n) ;
+    multiset <int> s ;
 
-    int p = st.size() ;
-    int q = ed.size() ;
+    for (auto & i : t) cin >> i , s.insert(i) ;
 
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
+    int ans = 2 ;
 
-    h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
-
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
+    vector <PII> w ;
+    FORN(i,n) FORN(j,n) if (i!=j) w.push_back({i,j}) ;
 
 
-    vector <int> index ;
+    for (auto start : w)
+    {
+        int a = t[start.xx] ;
+        int b = t[start.yy] ;
 
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
-    
+        if (se.find({a,b}) != se.end()) continue ;
+        se.insert({a,b}) ;
 
-    h2->gen( st ) ;
-    h4->gen( st ) ;
+        s.erase(s.find(a)) ;
+        s.erase(s.find(b)) ;
 
-    set<PII> se ;
+        int memo_a = a ;
+        int memo_b = b ;
+        int here = 2 ;
 
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
-
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
-
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
-            }
-
+        VI memo ;
+        while (true)
+        {
+            int maybe = a+b ;
+            auto it = s.find(a+b) ;
+            if (it == s.end()) break ;
+            a=b ;
+            b = maybe ;
+            s.erase(it) ;
+            memo.push_back(maybe) ;
+            se.insert({a,b}) ;
+            ++here ;
         }
-    
-    cout << se.size() << nl ;
-        
-    
+        for (auto x : memo) s.insert(x) ;
+        s.insert(memo_a) ;
+        s.insert(memo_b) ;
+        ans = MAX(ans , here) ;
+    }
+
+    cout << ans << nl ;
+
+
+
 
 }
 
@@ -203,9 +155,6 @@ int main ()
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
 
     int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){

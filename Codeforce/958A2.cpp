@@ -90,7 +90,10 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 
 const ll MOD = 1e9+7 ;
 const int N = 2000+10 ;
-const int B = 29 ;
+
+ll n ,m ;
+string s[N] ;
+vector<int> v1,v2 ;
 
 template <class T> inline T bigmod(T p,T e,T M){
     ll ret = 1;
@@ -101,98 +104,143 @@ template <class T> inline T bigmod(T p,T e,T M){
 }
 template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
 
+
+int has2[205][N] ;
+
 struct HASHING{
     ll MOD ;
     int N ,B ;
-    vector <int> hash , inv ;
-    int n ;
+    vector <int> has , inv , power ;
 
     HASHING(int _N , int _B , ll _M){
         N = _N ;
         B = _B ;
         MOD = _M ;
-        hash.resize(N) ;
+        has.resize(N) ;
         inv.resize(N) ;
+        power.resize(N) ;
 
         inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-        for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
+        power[0] = 1 ; power[1] = power[0] * 1ll * B % MOD;
+        for (int i = 2; i < N; ++i){
+            inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
+            power[i] = power[i-1] * 1ll * B % MOD;
+        } 
     }
 
-    inline int range(int l , int r)
+    inline int range(int l , int r , int idx)
     {
-        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
+        int ret = (has2[idx][r + 1] - has2[idx][l]) * 1ll * inv[l] % MOD;
         if (ret < 0) ret += MOD;
         return ret;
     }
 
-    void gen(string &t)
+    void gen( vector <int> & v , int cmd , int idx)
     {
-        n = t.size();
-        int power = 1;
 
-        for (int i = 0; i < n; ++i)
-        {
-            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' + 1)) % MOD;
-            // revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
-            power = power * 1ll * B % MOD;
+        if (cmd == 1){
+            for (int i = 0; i < m; ++i)
+                has[i + 1] = (has[i] + power[i] * 1ll * (s[idx][i] - 'a' + 1)) % MOD;
+            v.emplace_back(has[m]) ;
+        }
+        else{
+            for (int i = 0; i < n; ++i)
+                has2[idx][i + 1] = (has2[idx][i] + power[i] * 1ll * (s[idx][i] - 'a' + 1)) % MOD ;            
         }
     }
 
-}*h1 ,*h2, *h3, *h4;
+
+
+}*h1 ,*h2;
+
+// string txt = "ABABDABACDABABCABAB";
+// string pat = "ABABCABAB" ;
+
+void computeLPSArray(VI & pat , vector<int> & lps)
+{
+    int len = 0, i = 1 ;
+    lps[0] = 0 ;
+
+    while (i<pat.size()){
+        if (pat[i] == pat[len]){
+            len++ ;
+            lps[i++] = len ;
+        }
+        else {
+            if (len != 0) len = lps[len-1] ;
+            else lps[i++] = 0 ;
+        }
+    }
+}
+
+bool KMPSearch(VI & pat , VI & txt)
+{
+    int M = pat.size() ;
+    int N = txt.size() ;
+
+    // cout << pat << nl ;
+    // cout << txt << nl ;
+
+    vector <int> lps(M) ;
+    computeLPSArray(pat , lps) ;
+
+    int i = 0 , j = 0 ;
+    while (i<N){
+        // wa2(i,j) ;
+        if (pat[j] == txt[i]) i++ , j++ ;
+
+        if (j == M){
+            // cout << "Found Pattern at index " << i-j << endl ;
+            cout << i-j+1 << " " ;
+            // wa(i-j+1) ;
+            return true ;
+            j = lps[j-1] ; 
+        }
+
+        else if ( i<N && pat[j] != txt[i] ){
+            if (j != 0) j = lps[j-1] ;
+            else i = i+1 ;
+        }
+    
+    }
+    return false ;
+}
+
+bool go(int idx)
+{
+    // wa(idx) ;
+    VI v ;
+    for (int i = 0 ; i<m ; i++){
+        v.emplace_back(h1->range(idx , idx+m-1 , i)) ;
+    }
+    // cout << v << nl ;
+    if (KMPSearch(v,v1)){
+        cout << idx+1 << nl ;
+        return true ;
+    } 
+    return false ;
+}
+
 
 void _main_main()
 {
-    ll n  ;
-    string s ,  st ,ed ;
-    cin >> s >> st >> ed ;
-
-    int p = st.size() ;
-    int q = ed.size() ;
-
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
-
-    h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
-
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
-
-
-    vector <int> index ;
-
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
     
+    cin >> n >> m ;
 
-    h2->gen( st ) ;
-    h4->gen( st ) ;
+    h1 = new HASHING(N,29,MOD) ;
 
-    set<PII> se ;
+    FORN(i,n) cin >> s[i] ;
+    FORN(i,n) h1->gen(v1,1,i) ;
+    // cout << v1 << nl ;
 
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
+    FORN(i,m) cin >> s[i]  ;
+    FORN(i,m) h1->gen(v2,2,i) ;
+    // // cout << v2 << nl ;
 
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
+    for (int i = 0 ; i+m-1<n ; i++) if (go(i)) break ;
+    // bool bb = go(5) ;
 
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
-            }
 
-        }
-    
-    cout << se.size() << nl ;
-        
-    
 
 }
 
@@ -203,9 +251,6 @@ int main ()
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
 
     int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){

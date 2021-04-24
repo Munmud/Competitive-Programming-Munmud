@@ -89,128 +89,59 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 /*---------------------------------- x ------------------------------------*/
 
 const ll MOD = 1e9+7 ;
-const int N = 2000+10 ;
-const int B = 29 ;
+const int N = 5050 ;
 
-template <class T> inline T bigmod(T p,T e,T M){
-    ll ret = 1;
-    for(; e > 0; e >>= 1){
-        if(e & 1) ret = (ret * p) % M;
-        p = (p * p) % M;
-    } return (T)ret;
-}
-template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
 
-struct HASHING{
-    ll MOD ;
-    int N ,B ;
-    vector <int> hash , inv ;
-    int n ;
-
-    HASHING(int _N , int _B , ll _M){
-        N = _N ;
-        B = _B ;
-        MOD = _M ;
-        hash.resize(N) ;
-        inv.resize(N) ;
-
-        inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-        for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
-    }
-
-    inline int range(int l , int r)
-    {
-        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
-        if (ret < 0) ret += MOD;
-        return ret;
-    }
-
-    void gen(string &t)
-    {
-        n = t.size();
-        int power = 1;
-
-        for (int i = 0; i < n; ++i)
-        {
-            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' + 1)) % MOD;
-            // revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
-            power = power * 1ll * B % MOD;
-        }
-    }
-
-}*h1 ,*h2, *h3, *h4;
-
-void _main_main()
+void lpsCalc(string pat , vector <int> & lps)
 {
-    ll n  ;
-    string s ,  st ,ed ;
-    cin >> s >> st >> ed ;
+	int m = pat.size() ;
+	lps[0] = 0 ;
 
-    int p = st.size() ;
-    int q = ed.size() ;
+	int len = 0 , i = 1 ;
 
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
-
-    h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
-
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
-
-
-    vector <int> index ;
-
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
-    
-
-    h2->gen( st ) ;
-    h4->gen( st ) ;
-
-    set<PII> se ;
-
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
-
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
-
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
-            }
-
-        }
-    
-    cout << se.size() << nl ;
-        
-    
-
+	while (i<m)
+	{
+		if (pat[i] == pat[len]){
+			len++ ;
+			lps[i++] = len ;
+		}
+		else{
+			if (len !=0) len = lps[len-1] ;
+			else i++ ;
+		}
+	}
 }
 
 
 
-int main ()
+int main()
 {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
+	string pat , text ;
+	cin >> pat >> text ;
 
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
+	vector<int> lps(pat.size()) ;
+	lpsCalc(pat,lps) ;
 
-    int testCase = 1 ;//cin >> testCase ;
-    for (int i = 0; i < testCase; i++){
-        
-        _main_main() ;
-    }
-        
+    // cout << lps << nl ;
+
+	int i = 0 , j = 0 ;
+	int cc = 0 ;
+
+	while (i<text.size())
+	{
+		if (text[i] == pat[j]){
+			i++ , j++ ;
+		}
+		if (j == pat.size() ){
+			cc++ ;
+			j = lps[j-1] ;
+		}
+		else if (i<text.size() && text[i] != pat[j]){
+			if (j !=0) j = lps[j-1] ;
+			else i++ ;
+		}
+	}
+
+	cout << cc << endl ;
+
 }

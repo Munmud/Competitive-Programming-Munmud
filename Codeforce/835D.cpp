@@ -89,8 +89,8 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 /*---------------------------------- x ------------------------------------*/
 
 const ll MOD = 1e9+7 ;
-const int N = 2000+10 ;
-const int B = 29 ;
+const int N = 5050 ;
+
 
 template <class T> inline T bigmod(T p,T e,T M){
     ll ret = 1;
@@ -105,6 +105,7 @@ struct HASHING{
     ll MOD ;
     int N ,B ;
     vector <int> hash , inv ;
+    vector <int> revHash ;
     int n ;
 
     HASHING(int _N , int _B , ll _M){
@@ -113,9 +114,19 @@ struct HASHING{
         MOD = _M ;
         hash.resize(N) ;
         inv.resize(N) ;
+        revHash.resize(N) ;
 
         inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
         for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
+    }
+
+    inline int invRange(int lll , int rrr)
+    {
+        int l = n-1-rrr ;
+        int r = n-1-lll ;
+        int ret = (revHash[r + 1] - revHash[l]) * 1ll * inv[l] % MOD;
+        if (ret < 0) ret += MOD;
+        return ret;
     }
 
     inline int range(int l , int r)
@@ -133,67 +144,42 @@ struct HASHING{
         for (int i = 0; i < n; ++i)
         {
             hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' + 1)) % MOD;
-            // revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
+            revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
             power = power * 1ll * B % MOD;
         }
     }
 
-}*h1 ,*h2, *h3, *h4;
+}*h1 ,*h2;
+
+VI ans ;
+string s ;
+
+void go(int l,int r , int st)
+{
+    // wa2(s.substr(l,r-l+1) , st) ;
+    if (h1->range(l,r) == h1->invRange(l,r)){
+        ans[st]++ ;
+        if (l == r) return ;
+        go(l , l+ (r-l+1)/2 -1 , st+1 ) ;
+        
+    }
+}
 
 void _main_main()
 {
-    ll n  ;
-    string s ,  st ,ed ;
-    cin >> s >> st >> ed ;
+    cin >> s ;
 
-    int p = st.size() ;
-    int q = ed.size() ;
-
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
-
+    int n = s.size() ; ans.resize(n+1) ;
+    h1 = new HASHING(n+100 , 29, MOD) ;
     h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
 
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
-
-
-    vector <int> index ;
-
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
-    
-
-    h2->gen( st ) ;
-    h4->gen( st ) ;
-
-    set<PII> se ;
-
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
-
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
-
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
-            }
-
+    for (int len = 1 ; len<=n ; len++)
+    {
+        for (int i = 0 ; i+len-1 <n ; i++){
+            go(i,i+len-1 , 0) ;
         }
-    
-    cout << se.size() << nl ;
-        
-    
-
+    }
+    FORN(i,n) cout << ans[i] << " " ;
 }
 
 
@@ -203,9 +189,6 @@ int main ()
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
 
     int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){

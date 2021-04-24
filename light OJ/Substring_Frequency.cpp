@@ -89,110 +89,65 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 /*---------------------------------- x ------------------------------------*/
 
 const ll MOD = 1e9+7 ;
-const int N = 2000+10 ;
-const int B = 29 ;
+const int N = 5050 ;
 
-template <class T> inline T bigmod(T p,T e,T M){
-    ll ret = 1;
-    for(; e > 0; e >>= 1){
-        if(e & 1) ret = (ret * p) % M;
-        p = (p * p) % M;
-    } return (T)ret;
-}
-template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
 
-struct HASHING{
-    ll MOD ;
-    int N ,B ;
-    vector <int> hash , inv ;
-    int n ;
+string txt = "ABABDABACDABABCABAB";
+string pat = "ABABCABAB" ;
 
-    HASHING(int _N , int _B , ll _M){
-        N = _N ;
-        B = _B ;
-        MOD = _M ;
-        hash.resize(N) ;
-        inv.resize(N) ;
+void computeLPSArray(string pat , vector<int> & lps)
+{
+    int len = 0, i = 1 ;
+    lps[0] = 0 ;
 
-        inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-        for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
-    }
-
-    inline int range(int l , int r)
-    {
-        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
-        if (ret < 0) ret += MOD;
-        return ret;
-    }
-
-    void gen(string &t)
-    {
-        n = t.size();
-        int power = 1;
-
-        for (int i = 0; i < n; ++i)
-        {
-            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' + 1)) % MOD;
-            // revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
-            power = power * 1ll * B % MOD;
+    while (i<pat.size()){
+        if (pat[i] == pat[len]){
+            len++ ;
+            lps[i++] = len ;
+        }
+        else {
+            if (len != 0) len = lps[len-1] ;
+            else lps[i++] = 0 ;
         }
     }
+}
+ll cnt = 0 ;
 
-}*h1 ,*h2, *h3, *h4;
+void KMPSearch(string pat , string txt)
+{
+    int M = pat.size() ;
+    int N = txt.size() ;
+
+    vector <int> lps(M) ;
+    computeLPSArray(pat , lps) ;
+
+    int i = 0 , j = 0 ;
+    while (i<N){
+        if (pat[j] == txt[i]) i++ , j++ ;
+
+        if (j == M){
+             cnt++ ;
+            j = lps[j-1] ; 
+        }
+
+        else if ( i<N && pat[j] != txt[i] ){
+            if (j != 0) j = lps[j-1] ;
+            else i = i+1 ;
+        }
+    
+    }
+}
+
 
 void _main_main()
 {
     ll n  ;
-    string s ,  st ,ed ;
-    cin >> s >> st >> ed ;
-
-    int p = st.size() ;
-    int q = ed.size() ;
-
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
-
-    h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
-
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
+    cin >> txt >> pat ;
+    cnt = 0 ;
+    KMPSearch(pat,txt) ;
+    cout << cnt << nl ;
 
 
-    vector <int> index ;
-
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
-    
-
-    h2->gen( st ) ;
-    h4->gen( st ) ;
-
-    set<PII> se ;
-
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
-
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
-
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
-            }
-
-        }
-    
-    cout << se.size() << nl ;
-        
-    
 
 }
 
@@ -204,12 +159,9 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
-
-    int testCase = 1 ;//cin >> testCase ;
+    int testCase = 1 ;cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         

@@ -1,4 +1,3 @@
-
 /*
 Moontasir Mahmood 
 Information and Communication Engineering 
@@ -6,10 +5,10 @@ University of Rajshahi
 https://github.com/Munmud 
 moontasir042@gmail.com 
  */
-
-
+ 
+ 
 #include <bits/stdc++.h>
-
+ 
 #define setinf(ar)              memset(ar,126,sizeof ar)
 #define MEM(a, b)               memset ( a, (b), sizeof(a) )
 #define MAX(a, b)               ((a) > (b) ? (a) : (b))
@@ -23,33 +22,33 @@ moontasir042@gmail.com
 #define ALLR(V)                 V.rbegin(), V.rend()
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
-
+ 
 #define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
 #define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
-
-
+ 
+ 
 #define ll                      long long int
 #define xx                      first
 #define yy                      second
 #define pb(x)                   push_back(x)
 #define PI                      acos(-1.0)
-
+ 
 #define PII                     pair<int, int>
 #define PLL                     pair<long long int, long long int>
 #define VI                      vector <int>
 #define VL                      vector <long long int>
-
+ 
 #define BOUNDARY(i, j, r , c)   ((i >= 0 && i < r) && (j >= 0 && j < c))
 #define max3(x, y, z)           MAX(MAX(x, y), MAX(y, z))
-
+ 
 #define front_zero(n)           __builtin_clzll(n)
 #define back_zero(n)            __builtin_ctzll(n)
 #define total_one(n)            __builtin_popcountll(n)
-
+ 
 using namespace std;
-
-
+ 
+ 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
     return os << "(" << p.first << ", " << p.second << ")";
@@ -88,57 +87,50 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 }
 /*---------------------------------- x ------------------------------------*/
 
-const ll MOD = 1e9+7 ;
-const int N = 2000+10 ;
-const int B = 29 ;
+const int N = 2000+20 ;
+void computeLPSArray(string & pat , vector<int> & lps)
+{
+    int len = 0, i = 1 ;
+    lps[0] = 0 ;
 
-template <class T> inline T bigmod(T p,T e,T M){
-    ll ret = 1;
-    for(; e > 0; e >>= 1){
-        if(e & 1) ret = (ret * p) % M;
-        p = (p * p) % M;
-    } return (T)ret;
-}
-template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
-
-struct HASHING{
-    ll MOD ;
-    int N ,B ;
-    vector <int> hash , inv ;
-    int n ;
-
-    HASHING(int _N , int _B , ll _M){
-        N = _N ;
-        B = _B ;
-        MOD = _M ;
-        hash.resize(N) ;
-        inv.resize(N) ;
-
-        inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-        for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
-    }
-
-    inline int range(int l , int r)
-    {
-        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
-        if (ret < 0) ret += MOD;
-        return ret;
-    }
-
-    void gen(string &t)
-    {
-        n = t.size();
-        int power = 1;
-
-        for (int i = 0; i < n; ++i)
-        {
-            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' + 1)) % MOD;
-            // revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
-            power = power * 1ll * B % MOD;
+    while (i<pat.size()){
+        if (pat[i] == pat[len]){
+            len++ ;
+            lps[i++] = len ;
+        }
+        else {
+            if (len != 0) len = lps[len-1] ;
+            else lps[i++] = 0 ;
         }
     }
+}
+int stIdx[N] , edIdx[N] ;
 
-}*h1 ,*h2, *h3, *h4;
+void KMPSearch(string & pat , string & txt , int cmd)
+{
+    int M = pat.size() ;
+    int N = txt.size() ;
+
+    vector <int> lps(M) ;
+    computeLPSArray(pat , lps) ;
+
+    int i = 0 , j = 0 ;
+    while (i<N){
+        if (pat[j] == txt[i]) i++ , j++ ;
+
+        if (j == M){
+            // cout << "Found Pattern at index " << i-j << endl ;
+            if (cmd == 1) stIdx[i-j] = 1 ;
+            else edIdx[i-j + M -1] = 1 ;
+            j = lps[j-1] ; 
+        }
+        else if ( i<N && pat[j] != txt[i] ){
+            if (j != 0) j = lps[j-1] ;
+            else i = i+1 ;
+        }
+    }
+}
+VL hashValue ;
 
 void _main_main()
 {
@@ -146,71 +138,66 @@ void _main_main()
     string s ,  st ,ed ;
     cin >> s >> st >> ed ;
 
-    int p = st.size() ;
-    int q = ed.size() ;
 
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
+    KMPSearch(st,s, 1) ;
+    KMPSearch(ed,s, 2) ;
 
-    h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
-
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
-
-
-    vector <int> index ;
-
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
-    
-
-    h2->gen( st ) ;
-    h4->gen( st ) ;
-
-    set<PII> se ;
-
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
-
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
-
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
+    FORN(i,s.size())
+        if (stIdx[i] == 1){
+            ll val = 0 ;
+            for (int j = i ; j<s.size() ; j++)
+            {
+                val = val * 89 + s[j] ;
+                int len = j-i+1 ;
+                if (edIdx[j] == 1 && len >= max(st.size() , ed.size())) hashValue.emplace_back(val) ;
             }
-
         }
+
+        sort(ALL(hashValue)) ;
+
+        hashValue.resize(unique(ALL(hashValue)) - hashValue.begin()) ;
+        cout << hashValue.size() << nl ;
+
     
-    cout << se.size() << nl ;
+
+    // FORN(i,s.size()) cout << stIdx[i] << " "  ;
+    // cout << nl ;
+    // FORN(i,s.size()) cout << edIdx[i] << " "  ;
+    // cout << nl ;
         
     
-
+ 
 }
-
-
-
+ 
+ 
+ 
 int main ()
 {
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
 
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
+    // inv1[0] = 1, inv1[1] = modinverse((ll)BB1, MMOD1);
+    // inv2[0] = 1, inv2[1] = modinverse((ll)BB2, MMOD2);
 
+    // power1[0] = 1;
+    // power2[0] = 1;
+    // power1[1] = BB1 %MMOD1;
+    // power2[1] = BB2 %MMOD2;
+
+    // for (int i = 2; i < N; ++i){
+    //     inv1[i] = inv1[i - 1] * 1LL * inv1[1] % MMOD1;
+    //     inv2[i] = inv2[i - 1] * 1LL * inv2[1] % MMOD2;
+    //     power1[i] = power1[i-1] * 1ll * BB1 % MMOD1;
+    //     power2[i] = power2[i-1] * 1ll * BB2 % MMOD2;
+    // } 
+ 
+
+ 
     int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
-        _main_main() ;
+        _main_main() ;  
     }
         
 }

@@ -25,6 +25,7 @@ moontasir042@gmail.com
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
 #define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
+#define wa4(x , y, a, b) cout << (#x) << " " << (#y) << " " << (#a) << " " << (#b)<< " is " << (x) << " " << (y)<< " " <<a << " " << b << endl
 #define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
@@ -89,8 +90,7 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
 /*---------------------------------- x ------------------------------------*/
 
 const ll MOD = 1e9+7 ;
-const int N = 2000+10 ;
-const int B = 29 ;
+const int N = 5050 ;
 
 template <class T> inline T bigmod(T p,T e,T M){
     ll ret = 1;
@@ -113,10 +113,11 @@ struct HASHING{
         MOD = _M ;
         hash.resize(N) ;
         inv.resize(N) ;
-
         inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
         for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
     }
+
+
 
     inline int range(int l , int r)
     {
@@ -132,67 +133,104 @@ struct HASHING{
 
         for (int i = 0; i < n; ++i)
         {
-            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' + 1)) % MOD;
-            // revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 'a' + 1)) % MOD;
+            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - '0' + 1)) % MOD;
             power = power * 1ll * B % MOD;
         }
     }
 
-}*h1 ,*h2, *h3, *h4;
+}*h1 ,*h2;
+
+int dp[N][N] ;
+string s ;
+
+
+bool check(int a , int b , int c , int d){
+// cd boro
+    a--,b--,c--,d-- ;
+    int len = b-a+1 ;
+    int lo = 1 ;
+    int hi = len ;
+
+
+    int idx = INT_MAX ;
+
+    while (lo <= hi)
+    {
+        int mid = (lo+hi) /2 ;
+        if (h1->range(a , a+mid-1) == h1->range(c , c+mid-1)){
+            lo = mid+1 ;
+        }
+        else{
+            hi = mid-1 ;
+            idx = MIN(idx , mid) ;
+        }
+    }
+
+    
+    if(idx == INT_MAX) return 0 ;
+    if (s[c+idx-1] > s[a+idx-1]) return 1 ;        
+    return false ;
+}
+
+
+
+int go(int x,int y)
+{
+    if (dp[x][y] != -1) return dp[x][y] ;
+    if (x == y){
+        if (s[x-1] == '0') return dp[x][y] = 0 ;
+        if (go(x-1,y-1) && s[x-1] > s[x-2]) 
+            return dp[x][y] = 1 ;
+        return dp[x][y] = 0 ;
+    }
+    if (s[x-1] == '0') return dp[x][y] = go(x+1,y) ;
+    if (x == 1) return dp[x][y] = (go(x+1,y) +1) %MOD ;
+
+
+    int len = y-x+1 ;
+    int a = x-len , b = x-1 , c = x , d = y ;
+    a = max(a,1) ;
+    for ( ; a<=b ; a++)
+    {
+
+        if (b-a == d-c){
+
+            if (check(a,b,c,d)){
+                dp[x][y] = go(a,b) + go(c+1,d) ;
+                break ;
+            }
+        }
+        else{
+            dp[x][y] = go(a,b) + go(c+1,d) ;
+            break ;
+        } 
+
+    }
+
+
+    return dp[x][y]%= MOD ;
+}
 
 void _main_main()
 {
     ll n  ;
-    string s ,  st ,ed ;
-    cin >> s >> st >> ed ;
+    cin >> n >> s ;
+    MEM(dp , -1) ;
 
-    int p = st.size() ;
-    int q = ed.size() ;
-
-    h1 = new HASHING(N,B,MOD) ;
-    h2 = new HASHING(N,B,MOD) ;
-    h3 = new HASHING(N,37,MOD) ;
-    h4 = new HASHING(N,37,MOD) ;
-
+    h1 = new HASHING(s.size()+10 , 11 , MOD) ;
     h1->gen(s) ;
-    h2->gen(ed) ;
-    h3->gen(s) ;
-    h4->gen(ed) ;
 
-    int id = h2->range(0,q-1) ;
-    int id2 = h4->range(0,q-1) ;
+    dp[0][0] = 1 ;
+    dp[1][1] = 1 ;
+
+    cout << go(1,s.size()) << nl ;
+
+    // FORAB(i,1,n){
+    //     FORAB(j,1,n) cout << dp[i][j]<< "  " ;
+    //     cout << nl ;
+    // }
 
 
-    vector <int> index ;
-
-    for ( int i = 0 ; i + q - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + q - 1 ) == id && h3->range(i, i + q - 1 ) == id2 )
-            index.push_back( i + q-1 ) ;        
-    
-
-    h2->gen( st ) ;
-    h4->gen( st ) ;
-
-    set<PII> se ;
-
-    id = h2->range( 0 , p-1 ) ;
-    id2 = h4->range( 0 , p-1 ) ;
-
-    for ( int i = 0 ; i + p - 1 < s.size() ; i++ )
-        if ( h1->range(i, i + p - 1 ) == id && h3->range(i, i + p - 1 ) == id2 ){
-            auto it = lower_bound ( ALL(index) , i + MAX(p , q)-1 ) ;
-
-            while (it != index.end()){
-                // wa2(i,*it) ;
-                se.insert( { h1->range(i,*it) , h3->range(i,*it) } ) ;
-                it++ ;
-            }
-
-        }
-    
-    cout << se.size() << nl ;
-        
-    
 
 }
 
@@ -203,9 +241,6 @@ int main ()
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-
-    // inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
-    // for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
 
     int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
