@@ -50,41 +50,43 @@ using namespace std;
 
 const ll MOD = 1e9+7 ;
 const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
 
-void go(int a,int b , int val)
-{
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
-}
+int arr[110][110] ;
 
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n , m , k  ; cin >> n >> m >> k ;
+    if (arr[n][m] == k) cout << "YES" << nl ;
+    else cout << "NO" << nl ;
 
 }
+
 
 
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
+    FORAB(i,1,100) FORAB(j,1,100){
+        if (i == 1 && j == 1) arr[i][j] = 0 ;
+        else if (i == 1) arr[i][j] = arr[i][j-1] +1 ;
+        else if (j == 1) arr[i][j] = arr[i-1][j] +1 ;
+        else{
+            arr[i][j] = arr[i][j-1] + i ; 
+        }
+    }
 
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+
+
+    int testCase = 1 ;
+    cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

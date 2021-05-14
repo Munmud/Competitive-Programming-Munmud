@@ -24,6 +24,8 @@ moontasir042@gmail.com
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
+#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
+#define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
 
@@ -47,12 +49,6 @@ moontasir042@gmail.com
 
 using namespace std;
 
-/*---------------------------------- Debug ------------------------------------*/
-
-#define wa(x)            cout << (#x) << " is " << (x) << endl
-#define wa2(x , y)       cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (z) <<  endl
-#define wa4(x , y , z, w )cout << (#x) << " " << (#y)<<  " " << (#z) <<  " " << (#w)<< " is " << (x) << " " << (y)<< " " << (z) << " " << (w) <<  endl
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
@@ -66,12 +62,6 @@ ostream & operator << (ostream & os, vector <T> const& x) {
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template <class T>
-ostream & operator << (ostream & os, list <T> const& x) {
     os << "{ ";
     for(auto& y : x) os << y << " ";
     return os << "}";
@@ -96,26 +86,68 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
     }
     return os << "]";
 }
-template < typename F, typename S >
-ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
-    os << "[";
-    typename map< F , S >::const_iterator it;
-    for( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << it -> first << " = " << it -> second ;
-    }
-    return os << "]";
-}
 /*---------------------------------- x ------------------------------------*/
 
-
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 500 ;
+const int M = 500 ;
+
+char cc[N][M+1] , pp[2][2] ;
+char pattern[N][M] , black[N][M] ;
+ll n , m  ; 
+
+int solve()
+{
+    int i , j, s , cnt ;
+
+    for(i = 0 ; i+2 <=n ; i++)
+        for(j = 0 ; j+2 <=m ; j++){
+            pattern[i][j] = cc[i][j] == pp[0][0] && cc[i][j+1] == pp[0][1] && cc[i+1][j] == pp[1][0] && cc[i+1][j+1] == pp[1][1] ;
+            black[i][j] = cc[i][j] == 1 && cc[i][j+1] == 1 && cc[i+1][j] == 1 && cc[i+1][j+1] == 1 ;
+        }
+
+    cnt = 0 ;
+
+    for (s = 2 ; s<=n && s<=m ; s*=2)
+        for (i = 0 ; i+s+s <=n ; i++)
+            for (j = 0 ; j +s +s <=m ; j++){
+                pattern[i][j] = (pp[0][0] == 0 && pattern[i][j] || pp[0][0] == 1 && black[i][j]) && (pp[0][1] == 0 && pattern[i][j + s] || pp[0][1] == 1 && black[i][j + s])
+				&& (pp[1][0] == 0 && pattern[i + s][j] || pp[1][0] == 1 && black[i + s][j]) && (pp[1][1] == 0 && pattern[i + s][j + s] || pp[1][1] == 1 && black[i + s][j + s]);
+
+                black[i][j] = black[i][j] && black[i][j + s] && black[i + s][j] && black[i + s][j + s];
+                
+                if (pattern[i][j]) cnt++ ;
+            }
+    return cnt ;
+}
 
 
 void _main_main()
 {
-    ll n  ;
+    int i , j , a, b, c, d, ans ;
+
+    cin >> n >> m ;
+    for (i = 0 ; i<n ; i++){
+        cin >> cc[i] ;
+        for (j = 0 ; j<m ; j++)
+            cc[i][j] = cc[i][j] == '.' ? 0 : 1 ;
+    }
+
+    ans = 0 ;
+
+    for (a = 0 ; a <= 1 ; a++)
+        for (b = 0 ; b<=1 ; b++)
+            for (c = 0 ; c<=1 ; c++)
+                for (d = 0 ; d<=1 ; d++){
+                    pp[0][0] = a ;
+                    pp[0][1] = b ;
+                    pp[1][0] = c ;
+                    pp[1][1] = d ;
+                    ans+= solve() ;
+                }
+    cout << ans << nl ;
+
+
 
 }
 
@@ -127,10 +159,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

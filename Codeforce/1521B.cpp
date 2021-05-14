@@ -50,24 +50,32 @@ using namespace std;
 
 const ll MOD = 1e9+7 ;
 const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
-
-void go(int a,int b , int val)
-{
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
-}
 
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n  ;
+    cin >> n ;
+    vector <ll> v(n) ;
+    ll val = LLONG_MAX , idx = -1 ;
+    FORN(i,n){
+        cin >> v[i] ;
+        if (v[i] < val){
+            val = v[i] ;
+            idx = i ;
+        }
+    }
+
+    cout << n-1 << nl ;
+    FORN(i,n)
+    {
+        if (i == idx) continue ;
+        cout << i+1 << " " << idx+1 << " " ;
+        if (i&1) cout << (ll)1e9+7 << " " ;
+        else cout << (ll)1e9+9 << " " ;
+        cout << val << nl ;
+    }
+
 
 }
 
@@ -75,16 +83,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
-
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ; cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

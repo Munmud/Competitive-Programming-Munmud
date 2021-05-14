@@ -115,7 +115,22 @@ const int N = 1e6+100 ;
 
 void _main_main()
 {
-    ll n  ;
+    ll n ,k ;
+    cin >> n >> k ;
+    vector<ll> v(n) ;
+    FORN(i,n) cin >> v[i] ;
+    for (int i = 0 ; i<n-1 ; i++)
+    {
+        int mn = MIN(k,v[i]) ;
+        mn = MAX(mn,0) ;
+        // wa(mn) ;;
+        v[i]-=mn ;
+        k-=mn ;
+        v[n-1] += mn ;
+    }
+
+    FORN(i,n) cout << v[i]<< " " ;
+    cout << nl ;
 
 }
 
@@ -129,7 +144,7 @@ int main ()
 
     int testCase = 1 ;
     
-    //cin >> testCase ;
+    cin >> testCase ;
     
     for (int i = 0; i < testCase; i++){
         

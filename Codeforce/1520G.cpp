@@ -110,12 +110,75 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 
 
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 5050 ;
+
+const int fx[]={+1,-1,+0,+0};
+const int fy[]={+0,+0,+1,-1};
+
+
+void bfs(int sx , int sy, vector<vector<int>> & d , vector<vector<int>>&a){
+    int n = d.size() ;
+    int m = d[0].size() ;
+
+
+    queue<PII> q ;
+    q.push({sx,sy}) ;
+    d[sx][sy] = 1 ;
+    while (!q.empty()){
+        auto [x,y] = q.front() ;
+        q.pop() ;
+        FORN(k,4)
+        {
+            auto xx = x + fx[k] ;
+            auto yy = y + fy[k] ;
+            if (!BOUNDARY(xx,yy,n,m)) continue ;
+            if (a[xx][yy] == -1) continue ;
+            if (d[xx][yy] != 0) continue ;
+
+            d[xx][yy] = d[x][y] +1 ;
+            q.push({xx,yy}) ;
+        }
+    }
+    for (auto &e : d) {
+        for (auto &i : e) {
+            i--;
+        }
+    }
+    
+}
 
 
 void _main_main()
 {
-    ll n  ;
+    int n,m,w ; cin >> n >> m >> w ;
+    vector<vector<int>> a(n,vector<int>(m)) ;
+    vector<vector<int>> d1(n,vector<int>(m)) ;
+    vector<vector<int>> d2(n,vector<int>(m)) ;
+
+    FORN(i,n) FORN(j,m) cin >> a[i][j] ;
+
+    bfs(0,0,d1,a) ;
+    bfs(n-1,m-1,d2,a) ;
+
+    ll bestFinish = 1e18 ;
+    FORN(i,n) FORN(j,m) {
+        if ( d2[i][j] != -1 && a[i][j] >= 1 )
+            bestFinish = min( bestFinish , a[i][j] + w * 1ll * d2[i][j] ) ;
+    }
+
+
+    ll ans = w * 1ll * d1[n-1][m-1] ;
+    if (d1[n-1][m-1] == -1) ans = 1e18 ;
+
+    FORN(i,n) FORN(j,m){
+        if (d1[i][j] != -1 && a[i][j] >= 1 && bestFinish != 1e18) 
+            ans = min(ans , w * 1ll * d1[i][j] + a[i][j] + bestFinish) ;
+    }
+
+    if (ans == 1e18) cout << -1 << nl ;
+    else cout << ans << nl ;
+
+
 
 }
 
@@ -127,10 +190,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

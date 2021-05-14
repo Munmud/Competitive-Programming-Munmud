@@ -24,6 +24,8 @@ moontasir042@gmail.com
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
+#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
+#define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
 
@@ -47,12 +49,6 @@ moontasir042@gmail.com
 
 using namespace std;
 
-/*---------------------------------- Debug ------------------------------------*/
-
-#define wa(x)            cout << (#x) << " is " << (x) << endl
-#define wa2(x , y)       cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (z) <<  endl
-#define wa4(x , y , z, w )cout << (#x) << " " << (#y)<<  " " << (#z) <<  " " << (#w)<< " is " << (x) << " " << (y)<< " " << (z) << " " << (w) <<  endl
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
@@ -66,12 +62,6 @@ ostream & operator << (ostream & os, vector <T> const& x) {
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template <class T>
-ostream & operator << (ostream & os, list <T> const& x) {
     os << "{ ";
     for(auto& y : x) os << y << " ";
     return os << "}";
@@ -96,26 +86,73 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
     }
     return os << "]";
 }
-template < typename F, typename S >
-ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
-    os << "[";
-    typename map< F , S >::const_iterator it;
-    for( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << it -> first << " = " << it -> second ;
-    }
-    return os << "]";
-}
 /*---------------------------------- x ------------------------------------*/
 
-
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 5050 ;
 
+struct node
+{
+    int time , st , ed , isIn ;
+    node(int _time , int _st , int _ed , int _isIn) : time(_time) , st(_st) , ed(_ed) , isIn (_isIn) {}
+
+    bool operator < (const node &bb) const {
+        if (time  == bb.time) return isIn < bb.isIn ;
+        return time < bb.time ;
+    }
+};
+
+int n  ;
+bool check(int n, vector<int>& sa, vector<int>& ea, vector<int>& sb, vector<int>& eb)
+{
+	multiset<int> s, e;
+	vector<node> v;
+ 
+	for (int i = 0; i < n; i++)
+	{
+		v.emplace_back(sa[i], sb[i], eb[i], 1);
+		v.emplace_back(ea[i] + 1, sb[i], eb[i], 0);
+	}
+ 
+	sort(ALL(v));
+ 
+	for (auto i : v)
+	{
+		if (i.isIn)
+		{
+			if (!s.empty())
+			{
+				int maxS = *s.rbegin();
+				int minE = *e.begin();
+ 
+				if (maxS > i.ed || minE < i.st)
+					return false;
+			}
+ 
+			s.insert(i.st);
+			e.insert(i.ed);
+		}
+		else
+		{
+			s.erase(s.find(i.st));
+			e.erase(e.find(i.ed));
+		}
+	}
+ 
+	return true;
+}
 
 void _main_main()
 {
-    ll n  ;
+    cin >> n ;
+    vector<int> sa(n), ea(n), sb(n), eb(n);
+    FORN(i,n){
+        cin >> sa[i] >> ea[i] >> sb[i] >> eb[i] ;
+    }
+
+    if (check(n, sa, ea, sb, eb) && check(n, sb, eb, sa, ea)) cout << "YES" << nl ;
+    else cout << "NO" << nl ;
+
 
 }
 
@@ -127,10 +164,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

@@ -113,9 +113,64 @@ const ll MOD = 1e9+7 ;
 const int N = 1e6+100 ;
 
 
+
+bool dp[100+5][ ( (2000*100) /2 )+5] ;
+
 void _main_main()
 {
     ll n  ;
+    cin >> n ;
+    vector<int> v(n) ;
+    int sum = 0 ;
+    for (auto &i : v) cin >> i , sum+=i ;
+    if (sum&1) {
+        cout << 0 << nl ;
+        return ;
+    }
+    // wa(sum) ;
+    sum/=2 ; ;
+    dp[0][sum] = 1 ;
+
+    unordered_set <int> se ;
+    // set <int> se ;
+    se.insert(sum) ;
+
+    bool found = false ;
+
+    FORAB(i,1,n)
+    {
+        for ( auto &j : se ){
+            if (j-v[i-1] >=0){
+                se.insert(j-v[i-1]) ;
+                if (j-v[i-1] == 0){
+                    found = true ;
+                    goto afterFound ;
+                }
+            }
+        }
+    }
+
+    afterFound :
+    if (!found){
+        cout << 0 << nl ;
+        return ;
+    }
+    cout << 1 << nl ;
+    while (1)
+    {
+        FORN(i,n) {
+            if (v[i]&1){
+                cout << i+1 << nl ;
+                return ;
+            }
+            v[i]/=2 ;
+        }
+    }
+
+
+
+
+
 
 }
 

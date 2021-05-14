@@ -110,12 +110,30 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 
 
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 5050 ;
 
 
 void _main_main()
 {
-    ll n  ;
+    ll n  ; cin >> n ;
+    string s ;
+    cin >> s ;
+    int arr[26] ; MEM(arr,0) ;
+    bool flag = false ;
+    arr[s[0]-'A'] = 1 ;
+    FORAB(i,1,n-1)
+    {
+        if (s[i] != s[i-1]) {
+            if (arr[s[i]-'A']){
+                flag = true ;
+
+            } 
+        }
+        arr[s[i]-'A'] = 1 ;
+    }
+
+    if (flag) cout << "NO" << nl ;
+    else cout << "YES" << nl ;
 
 }
 
@@ -127,10 +145,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ;cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

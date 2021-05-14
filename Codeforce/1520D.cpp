@@ -50,24 +50,40 @@ using namespace std;
 
 const ll MOD = 1e9+7 ;
 const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
 
-void go(int a,int b , int val)
-{
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
+// --------- NCR Start here ------------
+template<typename T>
+T nCr(T n, T r) {
+    if(r > n - r) r = n - r;
+    ll  ans = 1,i;
+    for(i = 1; i <= r; i++) {
+        ans *= n - r + i;
+        ans /= i;
+    }
+return ans;
 }
+// ------------------End here -----------------
 
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n ;
+    cin >> n ;
+    map<ll,unsigned ll> mp ;
+    FORN(i,n)
+    {
+        ll x ;
+        cin >> x ;
+        mp[x-i]++ ;
+    }
+
+    unsigned ll cc = 0 ;
+    for (auto i : mp)
+    {
+        if (i.yy >1) cc+= i.yy * (i.yy-1) /2  ;
+    }
+    cout << cc << nl;
+
 
 }
 
@@ -75,16 +91,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
-
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ;cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

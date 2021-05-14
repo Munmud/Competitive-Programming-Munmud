@@ -50,24 +50,33 @@ using namespace std;
 
 const ll MOD = 1e9+7 ;
 const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
-
-void go(int a,int b , int val)
-{
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
-}
 
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n  ;
+    cin >> n ;
+    if (n == 2){
+        cout << -1 << nl ;
+        return ;
+    }
+    if (n == 1){
+        cout << 1 << nl ;
+        return ;
+    }
+
+    int cc = 1 ;
+    int arr[n][n] ;
+    FORN(i,n){
+        for (int j = (i&1 ? 1 : 0) ; j<n ; j+=2) arr[i][j] = cc++ ; 
+    }
+    FORN(i,n){
+        for (int j = (i&1 ? 0 : 1) ; j<n ; j+=2) arr[i][j] = cc++ ; 
+    }
+    FORN(i,n){
+        FORN(j,n) cout << arr[i][j] << " " ;
+        cout << nl ;
+    }
 
 }
 
@@ -75,16 +84,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
-
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ;cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

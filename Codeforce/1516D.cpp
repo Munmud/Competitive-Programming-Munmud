@@ -49,25 +49,53 @@ using namespace std;
 
 
 const ll MOD = 1e9+7 ;
-const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
+const int N = 1e5 ;
 
-void go(int a,int b , int val)
-{
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
-}
+VI p[N+5]  ;
+int nex[N+5] , dp[20][N+5] ;
+
 
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n , q ; cin >> n >> q ;
+    VI arr(n) ; for (auto & i : arr) cin >> i ;
+
+    FORAB(i,2,N)
+    {
+        if (p[i].empty()){
+            nex[i] = n+1 ;
+            for (int j = i ; j<=N ; j+= i) p[j].emplace_back(i) ;
+        }
+    }
+
+    dp[0][n+1] = n+1 ;
+
+    for (int i = n ; i>0 ; i--){
+        dp[0][i] = dp[0][i+1] ;
+        for (auto &j : p[arr[i-1]]){
+            dp[0][i] = MIN(dp[0][i] , nex[j]) ;
+            nex[j] = i ;
+        }
+    }
+
+    FORAB(i,1,19) FORAB(j,1,n+1) dp[i][j] = dp[i-1][dp[i-1][j]] ;
+
+    while (q--){
+        int l , r, ans = 0 ;
+        cin >> l >> r ;
+        for (int i = 19 ; i>=0 ; i--){
+            if (dp[i][l]<=r){
+                ans+= (1<<i) ;
+                l = dp[i][l] ;
+            }
+        }
+        cout << ans+1 << nl ;
+    }
+
+    
+
+
 
 }
 
@@ -75,16 +103,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
-
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ;//cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

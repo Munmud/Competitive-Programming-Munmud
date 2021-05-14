@@ -49,25 +49,54 @@ using namespace std;
 
 
 const ll MOD = 1e9+7 ;
-const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
+const int N = 1e6+5 ;
 
-void go(int a,int b , int val)
+set <int> se ;
+vector <int> w[N] ;
+int ind[N] ;
+vector <VI> ans ;
+
+void go(int n)
 {
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
+    VI v ;
+    v.emplace_back(n) ;
+    FORN(i,v.size()){
+        int num = v[i] ;
+        se.erase(num) ;
+        for (auto j : w[num]) ind[j]++ ;
+        if (i == v.size()-1)
+        {
+            int mem = v.size() ;
+            for (auto k : se) if (ind[k] != mem) v.emplace_back(k) ;
+        }
+    }
+    ans.emplace_back(v) ;
+    for (auto i : v) for (auto j : w[i]) ind[j] = 0 ;
 }
 
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n , m  ;
+    cin >> n >> m ;
+    FORAB(i,1,n) se.insert(i) ;
+    FORN(i,m)
+    {
+        int x,y ;
+        cin >> x >> y ;
+        w[x].emplace_back(y);
+        w[y].emplace_back(x);
+    }
+
+    FORAB(i,1,n) if (se.find(i) != se.end()) go(i) ;
+
+    cout << ans.size() << nl ;
+    for (auto i : ans){
+        cout << i.size() << " " ;
+        for (auto j : i) cout << j << " " ;
+        cout << nl ;
+    }
+
 
 }
 
@@ -75,16 +104,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
-
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ;//cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

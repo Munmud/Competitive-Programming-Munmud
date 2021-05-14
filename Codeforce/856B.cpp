@@ -6,10 +6,10 @@ University of Rajshahi
 https://github.com/Munmud 
 moontasir042@gmail.com 
  */
-
-
+ 
+ 
 #include <bits/stdc++.h>
-
+ 
 #define setinf(ar)              memset(ar,126,sizeof ar)
 #define MEM(a, b)               memset ( a, (b), sizeof(a) )
 #define MAX(a, b)               ((a) > (b) ? (a) : (b))
@@ -23,68 +23,92 @@ moontasir042@gmail.com
 #define ALLR(V)                 V.rbegin(), V.rend()
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
-
+ 
 #define nl                      "\n"
-
-
+ 
+ 
 #define ll                      long long int
 #define xx                      first
 #define yy                      second
 #define pb(x)                   push_back(x)
 #define PI                      acos(-1.0)
-
+ 
 #define PII                     pair<int, int>
 #define PLL                     pair<long long int, long long int>
 #define VI                      vector <int>
 #define VL                      vector <long long int>
-
+ 
 #define BOUNDARY(i, j, r , c)   ((i >= 0 && i < r) && (j >= 0 && j < c))
 #define max3(x, y, z)           MAX(MAX(x, y), MAX(y, z))
-
+ 
 #define front_zero(n)           __builtin_clzll(n)
 #define back_zero(n)            __builtin_ctzll(n)
 #define total_one(n)            __builtin_popcountll(n)
+ 
+using namespace std; 
 
-using namespace std;
+#define MAXN 1000005
+#define INF 1000000000
+#define MOD1 1000000007
+#define MOD2 1000000009
 
-
-const ll MOD = 1e9+7 ;
-const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
-
-void go(int a,int b , int val)
+ll n,t;
+struct node
 {
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
+	ll hash,pre,len;
+}a[MAXN];
+string str ;
+bool cmp(node x,node y)
+{
+	return x.len>y.len;
 }
-
-
+ 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
-
+    ll tt=0;
+		cin >> n ;
+		set<ll> s;
+		for(ll i=0;i<n;++i)
+		{
+			cin >> str ;
+			ll len=str.size();
+			ll s1=0,s2=0,s3=0,s4=0;
+			for(ll j=0;j<len;j++)
+			{
+				s1=(s1*97+str[j])%MOD1;
+				s2=(s2*97+str[j])%MOD2;
+				if(j>0) 
+				{
+					s3=(s3*97+str[j])%MOD1;
+				 	s4=(s4*97+str[j])%MOD2;
+				 	a[tt].pre=s3*MOD1+s4;
+				}
+				else a[tt].pre=-1;
+				a[tt].hash=s1*MOD1+s2;
+				s.insert(a[tt].hash);
+				a[tt].len=j;
+				tt++;
+			}
+		}   
+		sort(a,a+tt,cmp);
+		for(ll i=0;i<tt;i++)
+			if(s.count(a[i].hash)) s.erase(a[i].pre);
+		cout << s.size() << nl ;
+ 
 }
-
-
-
+ 
+ 
+ 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
-
-	MEM(arr,0) ;
-
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+ 
+    int testCase = 1 ; cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

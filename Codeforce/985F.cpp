@@ -24,8 +24,6 @@ moontasir042@gmail.com
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
-#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
 
@@ -50,47 +48,10 @@ moontasir042@gmail.com
 using namespace std;
 
 
-template < typename F, typename S >
-ostream& operator << ( ostream& os, const pair< F, S > & p ) {
-    return os << "(" << p.first << ", " << p.second << ")";
-}
-template <class T>
-ostream & operator << (ostream & os, vector <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template <class T>
-ostream & operator << (ostream & os, set <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template < typename T >
-ostream &operator << ( ostream & os, const multiset< T > &v ) {
-    os << "[";
-    typename multiset< T > :: const_iterator it;
-    for ( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << *it;
-    }
-    return os << "]";
-}
-template < typename F, typename S >
-ostream &operator << ( ostream & os, const map< F, S > &v ) {
-    os << "[";
-    typename map< F , S >::const_iterator it;
-    for( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << it -> first << " = " << it -> second ;
-    }
-    return os << "]";
-}
-/*---------------------------------- x ------------------------------------*/
-
 const ll MOD = 1e9+7 ;
+const int N = 2e5+10 ;
+const int B = 7 ;
 
-//----------- Mod inverse/Big mod Start here ----------
 template <class T> inline T bigmod(T p,T e,T M){
     ll ret = 1;
     for(; e > 0; e >>= 1){
@@ -99,33 +60,74 @@ template <class T> inline T bigmod(T p,T e,T M){
     } return (T)ret;
 }
 template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
-//----------- ------------------------------------ ----------
 
-ll ncr(ll n , ll r)
-{
-    ll arr[n+5]  ;
-    arr[0] = 1  ;
-    for (ll i = 1 ; i<=n ; i++) arr[i] = (arr[i-1] * i) %MOD ;
-    return (arr[n] * modinverse(arr[r], MOD) % MOD * modinverse(arr[n - r], MOD) % MOD) % MOD;
+int inv[N] ;
+struct HASHING{
+    ll MOD ;
+    int N ,B ;
+    vector <int> hash ;
+    int n ;
 
-}
+    HASHING(int _N , int _B , ll _M){
+        N = _N ;
+        B = _B ;
+        MOD = _M ;
+        hash.resize(N) ;
 
-// onst int maxn = ...;
-// const int MOD=...;
-// int C[maxn + 1][maxn + 1];
-// C[0][0] = 1;
-// for (int n = 1; n <= maxn; ++n) {
-//     C[n][0] = C[n][n] = 1;
-//     for (int k = 1; k < n; ++k)
-//         C[n][k] = (C[n - 1][k - 1] + C[n - 1][k])%MOD;
-// }
+
+    }
+
+    inline int range(int l , int r)
+    {
+        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
+        if (ret < 0) ret += MOD;
+        return ret;
+    }
+
+    void gen(string &t , int id)
+    {
+        n = t.size();
+        int power = 1;
+
+        for (int i = 0; i < n; ++i)
+        {
+            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 'a' == id ? 2 : 1)) % MOD;
+            power = power * 1ll * B % MOD;
+        }
+    }
+
+}*h1 ,*h2;
 
 
 void _main_main()
 {
-    ll n ,r ;
-    cin >>n >> r ;
-    cout << ncr(n,r) << nl ;
+    ll n , m  ;
+    cin >> n >> m ;
+    string s ; cin >> s ;
+
+    vector <HASHING *> h(26) ;
+    FORN(i,26){
+        h[i] = new HASHING(s.size()+5, B,MOD) ;
+        h[i]->gen(s,i) ;
+    }
+
+    while (m--)
+    {
+        int x, y , len ;
+        cin >> x >> y >> len ;
+        x-- , y-- ;
+        multiset<int>a,b ;
+        FORN(i,26)
+        {
+            a.insert(h[i]->range(x,x+len-1)) ;
+            b.insert(h[i]->range(y,y+len-1)) ;
+        }
+        if (a == b) cout << "YES" << nl ;
+        else cout << "NO" << nl ;
+    }
+
+
+
 
 }
 
@@ -136,6 +138,9 @@ int main ()
     ios::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+
+    inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
+    for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
 
     int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){

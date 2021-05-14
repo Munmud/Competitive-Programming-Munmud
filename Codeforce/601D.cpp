@@ -49,25 +49,68 @@ using namespace std;
 
 
 const ll MOD = 1e9+7 ;
-const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
+const int N = 300000+100 ;
+const int B = 51 ;
 
-void go(int a,int b , int val)
+
+ll val[N] ;
+int ch[N] ;
+bool vis[N] ;
+vector <int> v[N] ;
+
+VL  go(int node)
 {
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
-}
+    vis[node] = 1 ;
 
+    VL res ;
+
+    for (auto i : v[node]){
+        if (vis[i]) continue ;
+        VL temp = go(i) ;
+        for (auto j : temp) res.emplace_back(j) ;
+    }
+    sort(ALL(res)) ;
+    res.resize( distance(res.begin(), unique ( res.begin(), res.end() ) ) );
+    for (auto &i : res){
+        i = (i*B) %MOD ;
+    } 
+    res.emplace_back(ch[node]) ;
+    val[node] += res.size() ;
+    return res ;
+
+}
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n  ;
+    cin >> n ;
+    FORAB(i,1,n) cin >> val[i] ;
+    FORAB(i,1,n) {
+        char c ; cin >> c ;
+        ch[i] = c - 'a' + 1 ;
+    }
+    FORN(i,n-1){
+        int x,y ;cin >> x >> y ;
+        v[x].emplace_back(y) ;
+        v[y].emplace_back(x) ;
+    }
+
+    VL  res = go(1) ;
+
+    ll mx = -1 ;
+    ll cc = 0 ;
+    FORAB(i,1,n){
+        if (mx < val[i]){
+            mx = val[i] ;
+            cc = 1 ;
+        }
+        else if (mx == val[i]) cc++ ;
+    } 
+
+    cout << mx << nl << cc << nl ;
+
+
+
 
 }
 
@@ -75,16 +118,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
-
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+    int testCase = 1 ;//cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
+        
+        _main_main() ;
+    }
+        
 }

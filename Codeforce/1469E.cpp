@@ -110,12 +110,82 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 
 
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 1e6+20 ;
 
+/*-----------------------Bitmask------------------*/
+int Set(int N,int pos){return N=N | (1<<pos);}
+int reset(int N,int pos){return N= N & ~(1<<pos);}
+bool check(int N,int pos){return (bool)(N & (1<<pos));}
+/*------------------------------------------------*/
+
+int ceilLog(int x)
+{
+    int y = 0;
+    while((1 << y) < x)
+        y++;
+    return y;
+}
 
 void _main_main()
 {
-    ll n  ;
+    int n , k ; cin >> n >> k ;
+    string s ;
+    cin >> s ;
+
+    // possible bitmask list len
+    int TsubStr = n-k+1 ;
+    int m = min(k, ceilLog(n - k + 2));
+
+    VI used(1<<m , 0) ;
+    VI next0(n+1,INT_MAX) ;
+    for (int i = n-1 ; i>=0 ; i--){
+        if (s[i] == '0') next0[i] = i ;
+        else next0[i] = next0[i+1] ;
+    }
+
+    int d = k - m ;
+
+    // wa(s) ;
+
+    for (int i =n-1 ; i-k+1>=0 ; i--){
+        int lo = i-m+1 , hi = i ;
+        int loo = i-k+1 ;
+        if (next0[loo]-loo <d) continue ;
+        int id = 0 ;
+        for (int j = hi ; j>=lo ; j--)
+        {
+            int pos = hi-j ;
+            if (s[j] == '0') id =  Set(id , pos) ;
+        }
+        used[id] = 1 ;
+    }
+    int ans = -1 ;
+    FORN(i,used.size()){
+        if (used[i] == 0){
+            ans = i ;
+            break ;
+        }
+    }
+
+    if (ans == -1) {
+        cout << "NO" << nl ;
+        return ;
+    }
+
+    cout << "YES"<< nl ;
+    FORN(i,d) cout << "0" ;
+    stack<int> st ;
+    FORN(i,m){
+        if (ans&1) st.push(1) ;
+        else st.push(0) ;
+        ans = ans/2 ;
+    } 
+    while(!st.empty()){
+        cout << st.top()  ;
+        st.pop() ;
+    } 
+    cout<< nl ; 
+
 
 }
 
@@ -127,10 +197,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

@@ -24,8 +24,6 @@ moontasir042@gmail.com
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
-#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
 
@@ -49,6 +47,12 @@ moontasir042@gmail.com
 
 using namespace std;
 
+/*---------------------------------- Debug ------------------------------------*/
+
+#define wa(x)            cout << (#x) << " is " << (x) << endl
+#define wa2(x , y)       cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
+#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (z) <<  endl
+#define wa4(x , y , z, w )cout << (#x) << " " << (#y)<<  " " << (#z) <<  " " << (#w)<< " is " << (x) << " " << (y)<< " " << (z) << " " << (w) <<  endl
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
@@ -62,6 +66,12 @@ ostream & operator << (ostream & os, vector <T> const& x) {
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
+    os << "{ ";
+    for(auto& y : x) os << y << " ";
+    return os << "}";
+}
+template <class T>
+ostream & operator << (ostream & os, list <T> const& x) {
     os << "{ ";
     for(auto& y : x) os << y << " ";
     return os << "}";
@@ -86,33 +96,61 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
     }
     return os << "]";
 }
+template < typename F, typename S >
+ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
+    os << "[";
+    typename map< F , S >::const_iterator it;
+    for( it = v.begin(); it != v.end(); it++ ) {
+        if( it != v.begin() ) os << ", ";
+        os << it -> first << " = " << it -> second ;
+    }
+    return os << "]";
+}
 /*---------------------------------- x ------------------------------------*/
 
+
 const ll MOD = 1e9+7 ;
-const int N = 5050 ;
+const int N = 1e6+100 ;
 
 
 void _main_main()
 {
-    ll n ,x ;
+    ll n  ;
     cin >> n ;
-    VI cnt(31 , 0) ;
+    vector<ll> v(n) ;
 
-    FORN(i,n){
-        cin >> x ;
-        FORN(j,31) if ( (1<<j) & x ) cnt[j]++ ;
-    }
-    FORN(i,31){
-        if (cnt[i]%2){
-            cout << "NO" << nl ;
-            return ;
+    for (auto & i : v) cin >> i ;
+
+    ll id = 0 ;
+    FORN(i,n-1)
+    {
+        id^= v[i] ;
+        ll id2 = 0 ;
+        ll cc = 0 ;
+        bool flag = false ;
+        FORAB(j,i+1,n-1){
+            id2^= v[j] ;
+            // wa4(i,j,id,id2) ;
+            if (id2 == id) {
+                id2 = 0 ;
+                cc++ ;
+                if (j == n-1){
+                    cout << "YES" << nl ;
+                    return ;
+                }
+            }
+            else if (id2 == 0 && cc){
+                if (j == n-1){
+                    cout << "YES" << nl ;
+                    return ;
+                }
+            }
         }
     }
-    cout << "YES" << nl ;
 
-    cout << (1^0) << nl ;
+    // wa(0^3) ;
 
-
+    cout << "NO" << nl ;
 
 }
 
@@ -124,7 +162,10 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ; cin >> testCase ;
+    int testCase = 1 ;
+    
+    cin >> testCase ;
+    
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

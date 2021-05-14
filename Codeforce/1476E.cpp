@@ -110,14 +110,148 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 
 
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 1e5+10 ;
+const int B = 29 ;
 
+template <class T> inline T bigmod(T p,T e,T M){
+    ll ret = 1;
+    for(; e > 0; e >>= 1){
+        if(e & 1) ret = (ret * p) % M;
+        p = (p * p) % M;
+    } return (T)ret;
+}
+template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
+
+int inv[5] , power[5] ;
+struct HASHING{
+    ll MOD ;
+    int N ,B ;
+    vector <int> hash  ;
+    int n ;
+
+    HASHING(int _N , int _B , ll _M){
+        N = _N ;
+        B = _B ;
+        MOD = _M ;
+        hash.resize(N) ;
+    }
+
+    inline int range(int l , int r)
+    {
+        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
+        if (ret < 0) ret += MOD;
+        return ret;
+    }
+
+    int gen(string &t)
+    {
+        n = t.size();
+
+        for (int i = 0; i < n; ++i)
+        {
+            hash[i + 1] = (hash[i] + power[i] * 1ll * ( t[i] == '_' ? 27 : t[i] - 'a' + 1)) % MOD;
+           
+        }
+        return hash[n] ;
+    }
+
+}*h1 ,*h2;
+
+/*-----------------------Bitmask------------------*/
+int Set(int N,int pos){return N=N | (1<<pos);}
+int reset(int N,int pos){return N= N & ~(1<<pos);}
+bool check(int N,int pos){return (bool)(N & (1<<pos));}
+/*------------------------------------------------*/
+bool flag  ;
+
+// int mem[N] ;
+int vis[N] ;
+vector <int> g[N] ;
+stack<int> st ;
+
+void go(int node)
+{
+    vis[node] = 1 ;
+    // wa(node) ;
+    for (auto i : g[node]){
+        // wa(i) ;
+        if (vis[i] == 1) flag = false   ;
+        else if (vis[i] == 0) go(i) ;
+    }
+    vis[node] = 2 ;
+    st.push(node) ;
+}
 
 void _main_main()
 {
-    ll n  ;
+    ll n , m , k ;
+    cin >> n >> m >> k ;
+    h1 = new HASHING(k+5 , B , MOD) ;
+    flag = true; 
+
+
+    map<int,int> mp ;
+    
+    FORN(i,n)
+    {
+        string s ; cin >> s ;
+        mp[h1->gen(s)] = i+1 ;
+    }
+
+    vector <int> num(m) ;
+    set <int> idx[m] ;
+
+    
+
+    int limit = 1 <<k ;
+    FORN(i,m){
+        string s ;
+        cin >> s >> num[i] ;
+
+        set <int> se ;
+
+        FORN(j,limit){
+            string ss = s ;
+            FORN(p,k) if(check(j,p)) ss[p] = '_' ;
+            int id = h1->gen(ss) ;
+            if (mp.count(id)) se.insert(mp[id]) ;
+        }
+
+        // cout << se << nl ;
+
+        auto it = se.find(num[i]) ;
+        if ( it == se.end())flag = false ;
+        else se.erase(it) ;
+
+        for (auto j : se) g[num[i]].emplace_back(j) ;
+        
+    }
+    // wa(flag) ;
+
+    // FORN(i,n){
+    //     wa(i+1) ;
+    //     cout << g[i] << nl ;
+    // }
+
+    FORAB(i,1,n) if (vis[i] == 0) go(i) ;
+
+    if (flag){
+        cout << "YES" << nl ;
+        while(!st.empty()){
+            cout << st.top() << " " ;
+            st.pop() ;
+        }
+    }
+    else cout << "NO" << nl ;
+    
+
+
+
+
+
 
 }
+
 
 
 
@@ -127,10 +261,14 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
+    power[0] = 1 ;   power[1] = power[0] * 1ll * B % MOD; 
+    for (int i = 2; i < 5; ++i){
+        inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
+        power[i] = power[i-1] *1ll * B %MOD ;
+    } 
+
+    int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

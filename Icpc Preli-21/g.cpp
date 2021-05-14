@@ -24,6 +24,8 @@ moontasir042@gmail.com
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
+#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
+#define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
 
@@ -47,12 +49,6 @@ moontasir042@gmail.com
 
 using namespace std;
 
-/*---------------------------------- Debug ------------------------------------*/
-
-#define wa(x)            cout << (#x) << " is " << (x) << endl
-#define wa2(x , y)       cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (z) <<  endl
-#define wa4(x , y , z, w )cout << (#x) << " " << (#y)<<  " " << (#z) <<  " " << (#w)<< " is " << (x) << " " << (y)<< " " << (z) << " " << (w) <<  endl
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
@@ -66,12 +62,6 @@ ostream & operator << (ostream & os, vector <T> const& x) {
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template <class T>
-ostream & operator << (ostream & os, list <T> const& x) {
     os << "{ ";
     for(auto& y : x) os << y << " ";
     return os << "}";
@@ -96,27 +86,124 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
     }
     return os << "]";
 }
-template < typename F, typename S >
-ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
-    os << "[";
-    typename map< F , S >::const_iterator it;
-    for( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << it -> first << " = " << it -> second ;
-    }
-    return os << "]";
-}
 /*---------------------------------- x ------------------------------------*/
 
-
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 1000000+100 ;
 
+
+
+
+
+
+/* ------------- trie tree start here-------------------*/
+
+// initiall 'a-z' is considered 
+const int ALPHABET_SIZE = 26; 
+
+struct node {
+    bool endmark;
+    node* next[ALPHABET_SIZE + 1];
+    node()
+    {
+        endmark = false;
+        for (int i = 0; i < ALPHABET_SIZE; i++)
+            next[i] = NULL;
+    }
+} * root;
+
+void inst(string str)
+{
+int len = str.size() ;
+    node* curr = root;
+    for (int i = 0; i < len; i++) {
+        int id = str[i] - 'a';
+        if (curr->next[id] == NULL)
+            curr->next[id] = new node();
+        curr = curr->next[id];
+    }
+    curr->endmark = 1;
+}
+
+void del(node* cur)
+{
+    for (int i = 0; i < ALPHABET_SIZE; i++)
+        if (cur->next[i])
+            del(cur->next[i]);
+    delete (cur);
+}
+/* ------------- trie tree end here-------------------*/
+
+string s ;
+int vis[N] ;
+int uu[N] , vv[N] ;
+
+int res ;
+void go(int st , int pos , node * curr , int tt)
+{
+    // wa2(st,pos) ;
+    if (pos == SZ(s)){
+        if (curr->endmark){
+            res = MIN(tt,res) ; 
+            if (vv[st] == -1) vv[st] = tt ;
+            else vv[st] = MIN(vv[st] , tt) ;
+            
+        }
+        return ;
+    }
+
+    int id = s[pos] - 'a' ;
+    
+    if (curr == root){
+            // cout << "HAHAHA" ;
+        
+        if (vis[pos] ==0){
+            vis[pos] = 1 ;
+            uu[pos] = tt ;
+        }
+        else if (uu[pos] !=-1 && vv[pos]!= -1){
+            res = MIN(tt + vv[pos]-uu[pos] , res) ;
+            if (tt < uu[pos] && curr->next[id] ) {
+                go(st,pos+1 , curr->next[id] , tt) ;
+            }
+            // cout << "HAHAHA" ;
+            return ;
+        }
+        else{
+            // cout << "HAHAHA" ;
+            return ;
+        } 
+    }
+
+    if (curr->next[id] ) {
+        go(st,pos+1 , curr->next[id] , tt) ;
+    }
+    if (curr->endmark){
+        go(pos,pos , root , tt+1) ;
+    }
+
+}
 
 void _main_main()
 {
-    ll n  ;
+    ll n  ; cin >> n ;
 
+    root = new node() ;
+    res = INT_MAX ;
+    FORN(i,n){
+        cin >> s ;
+        inst(s) ;
+    }
+
+    MEM(vis,0) ;
+    MEM(uu,-1) ;
+    MEM(vv,-1) ;
+
+    cin >> s ;
+    go(0,0 , root , 1) ;
+    if (res != INT_MAX) cout << res << nl ;
+    else cout << "impossible" << nl ;
+    del(root) ;
 }
 
 
@@ -127,12 +214,9 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+        cout << "Case " << i+1 << ": " ;
         _main_main() ;
     }
         

@@ -116,6 +116,13 @@ const int N = 1e6+100 ;
 void _main_main()
 {
     ll n  ;
+    ll a,b,d ;
+    cin >> a >> b >>d ;
+    ll mn = MIN(a,b) ;
+    ll mx = MAX(a,b) ;
+
+    if (mx <= mn* (1+d) ) cout << "YES" << nl ;
+    else cout << "NO" << nl ;
 
 }
 
@@ -129,7 +136,7 @@ int main ()
 
     int testCase = 1 ;
     
-    //cin >> testCase ;
+    cin >> testCase ;
     
     for (int i = 0; i < testCase; i++){
         

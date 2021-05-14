@@ -110,12 +110,44 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 
 
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 5050 ;
 
 
 void _main_main()
 {
     ll n  ;
+    cin >> n ;
+    string s ;
+    cin >> s ;
+
+    unsigned ll rSum = 0 , lSum = 0 , rCnt = 0 , lCnt = 0 ;
+
+    unsigned ll cc = 0 ;
+    FORN(i,n){
+        if (s[i] == '*'){
+            rSum+= cc ;
+            rCnt++ ;
+        } 
+        else cc++ ;
+    }
+    unsigned ll ans = LLONG_MAX ;
+    FORN(i,n+1)
+    {
+        ll res = lSum + rSum ;
+        ans = MIN(ans, res) ;
+        // wa4(lCnt , lSum , rCnt , rSum) ;
+        if (i == n) continue ;
+        if (s[i] == '*'){
+            rCnt-- ;
+            lCnt++ ;
+        }
+        else {
+            rSum -= rCnt ;
+            lSum += lCnt ;
+        }
+    }
+
+    cout << (ans == LLONG_MAX ? 0 : ans) << nl ;
 
 }
 
@@ -127,10 +159,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

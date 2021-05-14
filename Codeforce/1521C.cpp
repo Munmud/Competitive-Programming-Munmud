@@ -112,10 +112,55 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 const ll MOD = 1e9+7 ;
 const int N = 1e6+100 ;
 
+int ask (int t , int i , int j ,  int x)
+{
+    cout << "? " << t << " " << i+1 << " " << j+1 << " " << x << nl ;
+    cout.flush() ;
+    int val ;
+    cin >> val ;
+    if (val == -1) exit(0) ;
+    return val ;
+
+}
+
 
 void _main_main()
 {
     ll n  ;
+    cin >> n ;
+    vector<int> v(n , -1) ;
+    int idx = -1 ;
+
+    for (int i = 1 ; i<n ; i+=2){
+        int pos1 = i-1 ;
+        int pos2 = i ;
+        
+        int val = ask(1,pos1,pos2,n-1) ;
+        if (val == n){
+            idx = pos2 ;
+            break ;
+        }
+        if (val == n -1 ){
+            if (ask(1,pos2,pos1,n-1) == n){
+                idx = pos1 ;
+                break ;
+            }
+        }
+    }
+    if (idx == -1) idx = n-1 ;
+
+    v[idx] = n ;
+
+    FORN(i,n){
+        if (i == idx) continue ;
+        v[i] = ask(2,i,idx,1) ;
+    }
+
+    cout << "!" ;
+    for (auto &i : v) cout << " " << i  ;
+    cout << nl ;
+    cout.flush() ;
+
 
 }
 
@@ -127,10 +172,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

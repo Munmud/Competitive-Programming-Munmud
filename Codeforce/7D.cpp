@@ -51,7 +51,7 @@ using namespace std;
 
 #define wa(x)            cout << (#x) << " is " << (x) << endl
 #define wa2(x , y)       cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (z) <<  endl
+#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (#z) <<  endl
 #define wa4(x , y , z, w )cout << (#x) << " " << (#y)<<  " " << (#z) <<  " " << (#w)<< " is " << (x) << " " << (y)<< " " << (z) << " " << (w) <<  endl
 
 template < typename F, typename S >
@@ -110,12 +110,102 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 
 
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 5e6+10 ;
 
+template <class T> inline T bigmod(T p,T e,T M){
+    ll ret = 1;
+    for(; e > 0; e >>= 1){
+        if(e & 1) ret = (ret * p) % M;
+        p = (p * p) % M;
+    } return (T)ret;
+}
+template <class T> inline T modinverse(T a,T M){return bigmod(a,M-2,M);}
+
+struct HASHING{
+    ll MOD ;
+    int N ,B ;
+    vector <int> hash , inv ;
+    vector <int> revHash ;
+    int n ;
+
+    HASHING(int _N , int _B , ll _M){
+        N = _N ;
+        B = _B ;
+        MOD = _M ;
+        hash.resize(N) ;
+        inv.resize(N) ;
+        revHash.resize(N) ;
+
+        inv[0] = 1, inv[1] = modinverse((ll)B, MOD);
+        for (int i = 2; i < N; ++i) inv[i] = inv[i - 1] * 1LL * inv[1] % MOD;
+    }
+
+    inline int invRange(int lll , int rrr)
+    {
+        int l = n-1-rrr ;
+        int r = n-1-lll ;
+        int ret = (revHash[r + 1] - revHash[l]) * 1ll * inv[l] % MOD;
+        if (ret < 0) ret += MOD;
+        return ret;
+    }
+
+    inline int range(int l , int r)
+    {
+        int ret = (hash[r + 1] - hash[l]) * 1ll * inv[l] % MOD;
+        if (ret < 0) ret += MOD;
+        return ret;
+    }
+
+    void gen(string &t)
+    {
+        n = t.size();
+        int power = 1;
+
+        for (int i = 0; i < n; ++i)
+        {
+            hash[i + 1] = (hash[i] + power * 1ll * (t[i] - 48 + 1)) % MOD;
+            revHash[i + 1] = (revHash[i] + power * 1ll * (t[n-1-i] - 48 + 1)) % MOD;
+            power = power * 1ll * B % MOD;
+        }
+    }
+
+}*h1 ,*h2;
+string s ;
+// int go(int len)
+// {
+//     // wa(len) ;
+//     if (len == 1) return 1 ;
+//     wa2(s.substr(0,len) , s.substr(s.size()-len)) ;
+//     if ( (h1->range(0 , len-1) == h1->invRange(0,len-1)) && (h1->range(s.size()-len , s.size()-1) == h1->invRange(s.size()-len , s.size()-1)) ) return go(len/2) +1 ;
+//     return go(len/2) ;
+        
+    
+// }
 
 void _main_main()
 {
     ll n  ;
+    cin >> s ;
+
+    h1 = new HASHING(s.size()+5 , 83,MOD) ;
+    h1->gen(s) ;
+
+    // ll id =  go(s.size()) ;
+    // // wa(id) ;
+    // cout << id * (id+1) /2 ;
+    ll arr[s.size()+1] ; MEM(arr,0) ;
+    arr[1] = 1 ;
+    ll sum = 0 ;
+    for (int i = 2 ; i<=s.size() ; i++ )
+    {
+        if (h1->range(0,i-1) == h1->invRange(0,i-1)){
+            arr[i] = 1 ;
+            arr[i] += arr[i/2] ;
+        }
+        sum+= arr[i] ;
+    }
+    cout << sum+1 << nl ;
+
 
 }
 
@@ -127,10 +217,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

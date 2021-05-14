@@ -1,10 +1,10 @@
 
 /*
-Moontasir Mahmood 
-Information and Communication Engineering 
-University of Rajshahi 
-https://github.com/Munmud 
-moontasir042@gmail.com 
+Moontasir Mahmood
+Information and Communication Engineering
+University of Rajshahi
+https://github.com/Munmud
+moontasir042@gmail.com
  */
 
 
@@ -110,12 +110,51 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 
 
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 2e5+100 ;
+
+int q1(int a,int b)
+{
+    cout << "? " << a << " " << b << nl ;
+    cout.flush();
+    int val ;
+    cin >> val ;
+    return val ;
+}
+
+int n , arr[N] ;
+
+set<int> se ;
 
 
 void _main_main()
 {
-    ll n  ;
+    int k ; cin >> k ;
+    int ans ;
+
+    int lo = 1 , hi = n ;
+    while (lo <= hi){
+        int md = (lo+hi)/2 ;
+        if (arr[md] == -1){
+            arr[md] = md - q1(1,md) ;
+            se.insert(md) ;
+        }
+        if (arr[md] == k){
+            ans = md ;
+            hi = md-1 ;
+        }
+        else if (arr[md] > k) hi = md-1 ;
+        else lo = md+1 ;
+    }
+
+
+    cout << "! " << ans << nl ;
+    cout.flush();
+
+    auto it = se.find(ans) ;
+    while (it!= se.end()){
+        arr[*it]-- ;
+        it++ ;
+    }
 
 }
 
@@ -127,13 +166,13 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    cin >> n ;
+    MEM(arr,-1) ;
+
+    int testCase = 1 ; cin >> testCase ;
     for (int i = 0; i < testCase; i++){
-        
+
         _main_main() ;
     }
-        
+
 }

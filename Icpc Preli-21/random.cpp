@@ -4,11 +4,6 @@ using namespace std ;
 unsigned seed1 = std::chrono::system_clock::now().time_since_epoch().count();
 default_random_engine gen(seed1); //gen(time(NULL));
 
-int randd(int a , int b)
-{
-    std::uniform_int_distribution<int> dis(a, b );
-    return dis(gen) ;
-}
 
 long long randd(long long a , long long b)
 {
@@ -16,6 +11,11 @@ long long randd(long long a , long long b)
     return dis(gen) ;
 }
 
+int randd(int a , int b)
+{
+    std::uniform_int_distribution<int> dis(a, b );
+    return dis(gen) ;
+}
 
 long double randd(long double a , long double b)
 {

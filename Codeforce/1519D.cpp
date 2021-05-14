@@ -116,6 +116,57 @@ const int N = 1e6+100 ;
 void _main_main()
 {
     ll n  ;
+    cin >> n ;
+
+    vector<ll> a(n),b(n) ;
+    for (auto & i : a) cin >> i ; 
+    for (auto & i : b) cin >> i ;
+    ll ans = 0 ;
+    FORN(i,n) ans+= a[i]*b[i] ;
+
+    ll preAns = ans ;
+
+    // wa(ans) ;
+
+
+    FORN(st,n)
+    {
+        int i = st-1 ;
+        int j = st+1 ;
+
+        ll res = preAns ;
+        while (i >=0 && j<n ){
+            res-= a[i]*b[i] ;
+            res-= a[j]*b[j] ;
+            res+= a[i]*b[j] ; 
+            res+= a[j]*b[i] ;
+
+            ans = MAX(res,ans) ;
+            i-- ;
+            j++ ; 
+        }
+    } 
+
+    FORN(st,n)
+    {
+        int i = st ;
+        int j = st+1 ;
+
+        ll res = preAns ;
+        while (i >=0 && j<n ){
+            res-= a[i]*b[i] ;
+            res-= a[j]*b[j] ;
+            res+= a[i]*b[j] ; 
+            res+= a[j]*b[i] ;
+            // wa3(i,j,res) ;
+
+            ans = MAX(res,ans) ;
+            i-- ;
+            j++ ; 
+        }
+    } 
+
+    cout << ans << nl ;
 
 }
 

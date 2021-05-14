@@ -24,6 +24,8 @@ moontasir042@gmail.com
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
+#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
+#define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
 
@@ -47,12 +49,6 @@ moontasir042@gmail.com
 
 using namespace std;
 
-/*---------------------------------- Debug ------------------------------------*/
-
-#define wa(x)            cout << (#x) << " is " << (x) << endl
-#define wa2(x , y)       cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (z) <<  endl
-#define wa4(x , y , z, w )cout << (#x) << " " << (#y)<<  " " << (#z) <<  " " << (#w)<< " is " << (x) << " " << (y)<< " " << (z) << " " << (w) <<  endl
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
@@ -66,12 +62,6 @@ ostream & operator << (ostream & os, vector <T> const& x) {
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template <class T>
-ostream & operator << (ostream & os, list <T> const& x) {
     os << "{ ";
     for(auto& y : x) os << y << " ";
     return os << "}";
@@ -96,26 +86,116 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
     }
     return os << "]";
 }
-template < typename F, typename S >
-ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
-    os << "[";
-    typename map< F , S >::const_iterator it;
-    for( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << it -> first << " = " << it -> second ;
-    }
-    return os << "]";
-}
 /*---------------------------------- x ------------------------------------*/
 
-
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 5050 ;
+
+// string txt = "ABABDABACDABABCABAB";
+// string pat = "ABABCABAB" ;
+
+void computeLPSArray(vector <pair <char , ll> > & pat , vector<int> & lps)
+{
+    int len = 0, i = 1 ;
+    lps[0] = 0 ;
+
+    while (i<pat.size()){
+        if (pat[i] == pat[len]){
+            len++ ;
+            lps[i++] = len ;
+        }
+        else {
+            if (len != 0) len = lps[len-1] ;
+            else lps[i++] = 0 ;
+        }
+    }
+}
+
+vector <int> idxList ;
+
+void KMPSearch(vector <pair <char , ll> > & pat , vector <pair <char , ll> > & txt)
+{
+    int M = pat.size() ;
+    int N = txt.size() ;
+
+    vector <int> lps(M) ;
+    computeLPSArray(pat , lps) ;
+
+    int i = 0 , j = 0 ;
+    while (i<N){
+        if (pat[j] == txt[i]) i++ , j++ ;
+
+        if (j == M){
+            // cout << "Found Pattern at index " << i-j << endl ;
+            idxList.emplace_back(i-j) ;
+            j = lps[j-1] ; 
+        }
+
+        else if ( i<N && pat[j] != txt[i] ){
+            if (j != 0) j = lps[j-1] ;
+            else i = i+1 ;
+        }
+    
+    }
+}
 
 
 void _main_main()
 {
-    ll n  ;
+    ll  n , m  ;
+    cin >> n >> m ;
+    vector <pair <char , ll> > a,b ;
+    FORN(i,n) {
+        ll x ; cin >> x; 
+        char xx ; cin >> xx >> xx ;
+        if (!a.empty() && a.back().xx == xx) a[a.size()-1].yy += x ;
+        else a.push_back({xx,x}) ;
+    }
+    pair <char , ll> uu , vv ;
+
+    FORN(i,m) {
+        ll x ; cin >> x; 
+        char xx ; cin >> xx >> xx ;
+        if (!b.empty() && b.back().xx == xx) b[b.size()-1].yy += x ;
+        else b.push_back({xx,x}) ;
+    }
+    n = a.size() ;
+    m = b.size() ;
+
+    auto it = b.begin() ;
+    it++ ;
+    uu = *b.begin() ;
+    if (b.size() >1) vv = b.back() , b.pop_back() ;
+    
+    vector <pair <char , ll> > bb (it , b.end()) ;
+
+
+
+    ll cc = 0 ;
+    if (n <m){}
+    else if (m == 1){
+        FORN(i,n) if (a[i].xx == uu.xx && a[i].yy >= uu.yy) cc+= abs(a[i].yy - uu.yy)+1 ;
+    }
+    else if (m == 2){
+        FORN(i,n-1){
+            if (a[i].xx == uu.xx && a[i+1].xx == vv.xx && a[i].yy >= uu.yy && a[i+1].yy >= vv.yy) cc++ ;
+        }
+
+    }
+    else{
+        KMPSearch(bb,a) ;
+        for (auto i : idxList)
+        {
+            if (i-1 >=0 && a[i-1].xx == uu.xx && a[i-1].yy >= uu.yy ){
+                int id = i + m -2 ;
+                if (id < n && a[id].xx == vv.xx && a[id].yy>= vv.yy ) cc++ ;
+            }
+        }
+
+    }
+
+    cout << cc << nl ;
+
 
 }
 
@@ -127,10 +207,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

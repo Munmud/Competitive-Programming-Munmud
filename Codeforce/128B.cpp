@@ -24,6 +24,8 @@ moontasir042@gmail.com
 #define IN(A, B, C)             ((B) <= (A) && (A) <= (C))
 #define AIN(A, B, C)            assert(IN(A, B, C))
 
+#define wa2(x , y)              cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
+#define wa(x)                   cout << (#x) << " is " << (x) << endl
 #define nl                      "\n"
 
 
@@ -47,12 +49,6 @@ moontasir042@gmail.com
 
 using namespace std;
 
-/*---------------------------------- Debug ------------------------------------*/
-
-#define wa(x)            cout << (#x) << " is " << (x) << endl
-#define wa2(x , y)       cout << (#x) << " " << (#y)<< " is " << (x) << " " << (y)<< endl
-#define wa3(x , y , z )  cout << (#x) << " " << (#y)<<  " " << (#z)<< " is " << (x) << " " << (y)<< " " << (z) <<  endl
-#define wa4(x , y , z, w )cout << (#x) << " " << (#y)<<  " " << (#z) <<  " " << (#w)<< " is " << (x) << " " << (y)<< " " << (z) << " " << (w) <<  endl
 
 template < typename F, typename S >
 ostream& operator << ( ostream& os, const pair< F, S > & p ) {
@@ -66,12 +62,6 @@ ostream & operator << (ostream & os, vector <T> const& x) {
 }
 template <class T>
 ostream & operator << (ostream & os, set <T> const& x) {
-    os << "{ ";
-    for(auto& y : x) os << y << " ";
-    return os << "}";
-}
-template <class T>
-ostream & operator << (ostream & os, list <T> const& x) {
     os << "{ ";
     for(auto& y : x) os << y << " ";
     return os << "}";
@@ -96,26 +86,96 @@ ostream &operator << ( ostream & os, const map< F, S > &v ) {
     }
     return os << "]";
 }
-template < typename F, typename S >
-ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
-    os << "[";
-    typename map< F , S >::const_iterator it;
-    for( it = v.begin(); it != v.end(); it++ ) {
-        if( it != v.begin() ) os << ", ";
-        os << it -> first << " = " << it -> second ;
-    }
-    return os << "]";
-}
 /*---------------------------------- x ------------------------------------*/
 
-
 const ll MOD = 1e9+7 ;
-const int N = 1e6+100 ;
+const int N = 1e5+10 ;
+
+
+unsigned seed1 = std::chrono::system_clock::now().time_since_epoch().count();
+default_random_engine gen(seed1); //gen(time(NULL));
+
+int randd(int a , int b)
+{
+    std::uniform_int_distribution<int> dis(a, b );
+    return dis(gen) ;
+}
+
+long long randd(long long a , long long b)
+{
+    std::uniform_int_distribution<long long> dis(a, b );
+    return dis(gen) ;
+}
+
+
+long double randd(long double a , long double b)
+{
+    std::uniform_real_distribution<long double> dis(a, b );
+    return dis(gen) ;
+}
+
+
+string s ;
+
+void go(vector<int>& v , int k )
+{
+    int n = v.size() ;
+    if (n == 0 || k <= 0) return ;
+    // cout << v << nl ;
+
+    VL arr(26,0) , cc(26,0) ;
+    FORN(i,n) arr[s[ v[i] ]-'a'] += s.size()-v[i] , cc[s[ v[i] ]-'a']++ ;
+    FORAB(i,1,25) arr[i] += arr[i-1] ;
+    
+    auto it = lower_bound(ALL(arr),k) ;
+    int id = distance(arr.begin() ,lower_bound(ALL(arr),k) ) ;
+    // if (id != n) 
+        cout << (char)(id + 'a') ;
+
+        // wa2(id,k) ;
+        // cout << arr << nl ;
+
+    vector <int> vv ;
+    for (auto i : v) if (i+1 <s.size() &&  s[i]-'a' == id) vv.emplace_back(i+1) ;
+
+    // wa2(cc[id] , cc[id-1]) ;
+
+    ll fnd = cc[id] + (id == 0 ? 0 : arr[id-1]) ;
+    // wa(fnd) ;
+
+    go(vv , k - fnd ) ;
+    
+}
+int k ;
 
 
 void _main_main()
 {
-    ll n  ;
+    // ll n , k  ;
+    cin >> s >> k ; 
+    // s = string (randd(40,60) , '.') ;
+
+    ll n = s.size() ;
+    // FORN(i,n) s[i] = randd(0,25) + 'a' ;
+    // k = randd(1ll , n * (n+1) /2) ;
+    // wa2(s,k) ;
+
+    // vector <string > se ;
+    // FORN(i,n) FORAB(j,i,n-1) se.push_back(s.substr(i,j-i+1)) ;
+    // sort(ALL(se)) ;
+    // FORN(i,se.size()) wa2(i,se[i]) ;
+    // cout << se[k-1] << nl ;
+
+
+    if (n * (n+1)/2 < k){
+        cout << "No such line." << nl ;
+        return ;
+    }
+
+    vector <int> v ;
+    FORN(i,n) v.emplace_back(i) ;
+    go(v , k) ;
+
 
 }
 
@@ -127,10 +187,7 @@ int main ()
     cin.tie(0);
     cout.tie(0);
 
-    int testCase = 1 ;
-    
-    //cin >> testCase ;
-    
+    int testCase = 1 ;//cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

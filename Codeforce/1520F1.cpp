@@ -1,10 +1,11 @@
 
+
 /*
-Moontasir Mahmood 
-Information and Communication Engineering 
-University of Rajshahi 
-https://github.com/Munmud 
-moontasir042@gmail.com 
+Moontasir Mahmood
+Information and Communication Engineering
+University of Rajshahi
+https://github.com/Munmud
+moontasir042@gmail.com
  */
 
 
@@ -48,26 +49,42 @@ moontasir042@gmail.com
 using namespace std;
 
 
+
 const ll MOD = 1e9+7 ;
-const int N = 5050 ;
-int n = 3 , m = 4 ;
-int arr[110][110] ;
+const int N = 2e5+10 ;
 
-void go(int a,int b , int val)
-{
-	if (a == n && b == m){
-		cout << val << nl ;
-		return ;
-	}
-	if (a+1 <=n) go(a+1,b,val+b) ;
-	if (b+1 <=m) go(a,b+1,val+a) ;
-}
-
+int arr[N+5] ;
 
 void _main_main()
 {
-	ll n  ;
-	go(1,1,0) ;
+    ll n , t  ; cin >> n >> t ;
+    int lo = 1 , hi = n ;
+    int k ; cin >> k ;
+
+    int ans ;
+
+
+    while (lo<=hi)
+    {
+        // wa2(lo,hi) ;
+        int mid = (lo+hi)/2 ;
+        cout << "? " << lo << " " << mid << nl ;
+        fflush(stdout) or cout.flush() ;
+
+        int sum ; cin >> sum ;
+        arr[mid] = arr[lo-1] + sum ;
+        int zCnt = mid - arr[mid] ;
+
+        if (zCnt == k){
+            ans = mid ;
+            hi = mid-1 ;
+            // cout << "! " << mid << nl ;
+            //break ;
+        }
+        else if (zCnt > k) hi = mid-1 ;
+        else lo = mid+1 ;
+    }
+    cout << "! " << ans << nl ;
 
 }
 
@@ -75,16 +92,14 @@ void _main_main()
 
 int main ()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cout.tie(0);
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
 
-	MEM(arr,0) ;
+    int testCase = 1 ;//cin >> testCase ;
+    for (int i = 0; i < testCase; i++){
 
-	int testCase = 1 ;//cin >> testCase ;
-	for (int i = 0; i < testCase; i++){
-		
-		_main_main() ;
-	}
-		
+        _main_main() ;
+    }
+
 }
