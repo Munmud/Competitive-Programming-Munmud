@@ -113,16 +113,26 @@ const ll MOD = 1e9+7 ;
 const int N = 1e6+100 ;
 
 
-
 void _main_main()
 {
     ll n  ;
-    priority_queue<int, vector<int> , greater<int>  > pq ;
-    vector<int> v ;
-    FORN(i,10) v.push_back(i) ;
-    sort(ALL(v) , greater<int>() ) ;
+    cin >> n ;
+    ll sum = 0 ;
+    FORN(i,n){
+        int x ;
+        cin >> x ;
+        sum+=x ;
+    }
 
-    cout << v << nl ;
+    if (sum%n == 0){
+        cout << 0 << nl ;
+    }
+    else{
+        ll md = sum%n ;
+        ll z = n-md ;
+        cout << md*z << nl ;
+
+    }
 
 }
 
@@ -135,7 +145,7 @@ int main ()
     cout.tie(0);
 
     int testCase = 1 ;
-    //cin >> testCase ;
+    cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

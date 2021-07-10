@@ -112,18 +112,52 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 const ll MOD = 1e9+7 ;
 const int N = 1e6+100 ;
 
+double v , ans ;
+void go (double a , double b, double c , double res , double cc){
+    // wa4(a,b,c,res);
+    if (a >= 0.0000001){
+        if (a<=v){
+            if (b>=0.0000001)
+                go(0,b+(a/2.0),c+(a/2.0),res*a,cc+1) ;
+            else go(0,0,c+a,res*a,cc+1) ;
+        } 
+        else{
+            if (b>=0.0000001)
+                go(a-v,b+(v/2.0),c+(v/2.0),res*a,cc+1) ;
+            else go(a-v,0,c+v,res*a,cc+1) ; 
+
+        } 
+    }
+    if (b>=0.0000001){
+        if (b<=v){
+            if (a>=0.0000001)
+                go(a+(b/2.0),0,c+(b/2.0),res*b,cc+1) ;
+            else go(0,0,c+b,res*b,cc+1) ;
+        } 
+        else{
+            if (a>=0.0000001)
+                go(a+(v/2.0),b-v,c+(v/2.0),res*b,cc+1) ;
+            else go(0,b-v,c+v,res*b,cc+1);
+
+        } 
+    }
+    double tt = c*res*cc ;
+    // wa(tt) ;
+    ans+= tt ;
+    
+}
 
 
 void _main_main()
 {
     ll n  ;
-    priority_queue<int, vector<int> , greater<int>  > pq ;
-    vector<int> v ;
-    FORN(i,10) v.push_back(i) ;
-    sort(ALL(v) , greater<int>() ) ;
+    double a,b,c;
+    cin >> a>> b >> c >> v ;
+    ans = 0.0 ;
 
-    cout << v << nl ;
+    go(a,b,c,1,1) ;
 
+    cout << fixed << setprecision(12) <<  ans << nl ;
 }
 
 
@@ -135,7 +169,7 @@ int main ()
     cout.tie(0);
 
     int testCase = 1 ;
-    //cin >> testCase ;
+    cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

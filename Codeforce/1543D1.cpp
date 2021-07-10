@@ -112,17 +112,28 @@ ostream &operator << ( ostream & os, const multimap< F, S > &v ) {
 const ll MOD = 1e9+7 ;
 const int N = 1e6+100 ;
 
+ll ch(ll num){
+    cout << num << nl ;
+    cout.flush() ;
+
+    ll x ; cin >> x ;
+    return x ;
+}
 
 
 void _main_main()
 {
-    ll n  ;
-    priority_queue<int, vector<int> , greater<int>  > pq ;
-    vector<int> v ;
-    FORN(i,10) v.push_back(i) ;
-    sort(ALL(v) , greater<int>() ) ;
+    ll n , k  ;
+    cin >> n >> k ;
 
-    cout << v << nl ;
+    ll cc = 0 ;
+    FORN(i,n){
+        ll ans = ch(i^cc) ;
+        cc^=i^cc ;
+        if (ans == 1) break ;
+        if (ans == -1) exit(0) ;
+
+    } 
 
 }
 
@@ -135,7 +146,7 @@ int main ()
     cout.tie(0);
 
     int testCase = 1 ;
-    //cin >> testCase ;
+    cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;

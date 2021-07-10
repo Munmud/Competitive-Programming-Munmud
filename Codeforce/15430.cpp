@@ -113,16 +113,19 @@ const ll MOD = 1e9+7 ;
 const int N = 1e6+100 ;
 
 
-
 void _main_main()
 {
-    ll n  ;
-    priority_queue<int, vector<int> , greater<int>  > pq ;
-    vector<int> v ;
-    FORN(i,10) v.push_back(i) ;
-    sort(ALL(v) , greater<int>() ) ;
-
-    cout << v << nl ;
+    ll n , m ;
+    cin >> n >> m ;
+    ll a = max(n,m) - min(n,m) ;
+    if (a == 0){
+        cout << 0 << " " << 0 << nl ;
+        return  ;
+    } 
+    ll md = (max(n,m)) % a ;
+    ll mn =  min(a-md ,md ) ;
+    if (mn == a) mn = 0 ;
+    cout << a << " " << mn << nl ;
 
 }
 
@@ -135,7 +138,7 @@ int main ()
     cout.tie(0);
 
     int testCase = 1 ;
-    //cin >> testCase ;
+    cin >> testCase ;
     for (int i = 0; i < testCase; i++){
         
         _main_main() ;
